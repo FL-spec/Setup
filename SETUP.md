@@ -1,11 +1,11 @@
-# Working on Farmai from your phone (GitHub Codespaces)
+# Working from your phone (GitHub Codespaces)
 
 This repo includes a dev container ([.devcontainer/devcontainer.json](.devcontainer/devcontainer.json))
 that automatically installs **Claude Code** in every Codespace. No PC needs to stay running.
 
 ## First time
 
-1. Open the repo on GitHub: https://github.com/FL-spec/Farmai
+1. Open the repo on GitHub: https://github.com/FL-spec/Setup
 2. Tap the green **Code** button → **Codespaces** tab → **Create codespace on main**.
 3. Wait for it to build (the dev container installs Claude Code automatically on first create).
 4. In the Codespace terminal, run:
