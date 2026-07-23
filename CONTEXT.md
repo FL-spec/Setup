@@ -1,28 +1,20 @@
-# CONTEXT.md — Domain Language
+# Domain context
 
-The shared vocabulary for this project. Every fuzzy term gets pinned here the
-moment it comes up in `/grill`, so agents and humans mean the same thing.
+This is the shared vocabulary and invariant ledger for the project. Pin fuzzy terms here during product planning so humans and agents use the same language.
 
-Keep it current. This file is loaded into every slice subagent and survives after
-`prd.md` is archived — it is part of the long-term source of truth.
+Keep it current. It is loaded for planning, implementation, and review and remains part of the long-term source of truth after a feature is promoted.
 
 ## Glossary
 
-> One row per term. Pin the meaning, and call out collisions explicitly.
-> Example: _"**Account** → the billing entity (a `Customer`), NOT a login (`User`)."_
-
 | Term | Means | Not to be confused with |
-| ---- | ----- | ----------------------- |
-| _(term)_ | _(precise definition)_ | _(the thing it's often confused with)_ |
+|---|---|---|
+| _(term)_ | _(precise definition)_ | _(common collision)_ |
 
 ## Domain rules
 
-> Invariants and rules that are always true in this domain.
-
-- _(none yet)_
+- _(Invariant that must remain true.)_
 
 ## Boundaries
 
-> What lives where — the major modules and their responsibilities.
+- _(Major module and its responsibility.)_
 
-- _(none yet)_

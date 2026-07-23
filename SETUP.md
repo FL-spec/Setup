@@ -1,42 +1,32 @@
-# Working from your phone (GitHub Codespaces)
+# Local and Codespaces setup
 
-This repo includes a dev container ([.devcontainer/devcontainer.json](.devcontainer/devcontainer.json))
-that automatically installs **Claude Code** in every Codespace. No PC needs to stay running.
+This template supports both Codex and Claude Code.
 
-## First time
+## GitHub Codespaces
 
-1. Open the repo on GitHub: https://github.com/FL-spec/Setup
-2. Tap the green **Code** button → **Codespaces** tab → **Create codespace on main**.
-3. Wait for it to build (the dev container installs Claude Code automatically on first create).
-4. In the Codespace terminal, run:
+1. Create a repository from `FL-spec/Setup`.
+2. Open **Code → Codespaces → Create codespace on main**.
+3. Wait for the dev container to install both CLIs.
+4. Start either `codex` or `claude` and authenticate in the browser.
+5. Describe the product or feature normally in chat.
 
-   ```bash
-   claude
-   ```
+The repository instructions handle PRD creation and the delivery loop. You do not invoke a workflow command.
 
-5. Follow the login prompt to authenticate Claude Code (one-time, opens in the browser).
+## Local installation
 
-## Day to day
+Use the official installation method for the agent you choose:
 
-- Reopen your existing Codespace from https://github.com/codespaces (faster than creating a new one).
-- Run `claude` in the terminal and work as normal.
-- Commit and push when done:
+```bash
+npm install --global @openai/codex
+npm install --global @anthropic-ai/claude-code
+```
 
-  ```bash
-  git add .
-  git commit -m "your message"
-  git push
-  ```
+Authenticate interactively and open the repository root. Keep GitHub CLI authenticated when you want the agent to create branches, PRs, and promotions.
 
-## Tips
+## Operating notes
 
-- **Phone browser:** the Codespaces web editor works in mobile Safari/Chrome. Request the
-  desktop site for a better terminal experience.
-- **Stop when idle:** Codespaces bill by usage. Stop the Codespace from
-  https://github.com/codespaces when you're done to avoid charges. Stopped Codespaces
-  keep your files; they just don't run.
-- **If Claude Code isn't found** after opening a Codespace, install it manually:
+- Stop idle Codespaces to avoid charges.
+- Use a fresh feature conversation for a new PRD.
+- The durable branch/spec state allows a later session or either supported agent to resume.
+- Branch protection or required human review may pause automatic promotion; the agent must never bypass it.
 
-  ```bash
-  npm install -g @anthropic-ai/claude-code
-  ```
