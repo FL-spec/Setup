@@ -1,79 +1,44 @@
-# How We Build
+# How we build
 
-```
-/idea  →  /grill  →  /autopilot
-```
+## One continuous conversation
 
-You drive the first two. Agents drive the third. `/clear` between each.
+Start with the product outcome:
 
----
+> I want to plan a feature that lets [user] achieve [outcome].
 
-## 1 · `/idea` — jot it down *(optional)*
+The agent inspects the current product and interviews you only where judgment is needed. For each material choice it recommends the strongest answer and explains the trade-off. It creates the feature branch and writes the PRD as decisions are agreed.
 
-For when the idea is still fuzzy. No design, no code.
+When the PRD is complete:
 
-```
-/idea
+- **Approved / lock it / go ahead** — lock the PRD and continue automatically through implementation and merge.
+- **Almost** — revise the identified decisions, then present it again.
+- **Plan only** — preserve the PRD and stop without implementation.
+- **PR only** — implement and verify, but leave the green PR ready instead of merging.
 
-I want to build [thing] for [who] so they can [outcome].
-```
+There is no separate build prompt.
 
-→ writes `idea.md`. Next: `/grill`.
+## What happens after approval
 
----
+| Stage | Agent behavior | Durable evidence |
+|---|---|---|
+| Plan | Map criteria and dependencies into vertical slices | `plan.md`, `slices.md` |
+| TDD | RED → GREEN → REFACTOR one slice | Tests and slice commit |
+| Review | Separate read-only agent checks behavior and risk | Review findings |
+| Repair | Writer fixes blockers and reruns gates | Updated commit/evidence |
+| Verify | Full repository and specialist checks | `verification.md` |
+| Promote | Reconcile `main`, require green checks, merge | PR and final commit |
 
-## 2 · `/grill` — design it
+The orchestrator continues until the completion contract is met or a mandatory blocker requires a human decision. It does not stop merely because one test or review failed; recoverable failures re-enter the loop.
 
-An interview, one question at a time. You answer **Yes / No / Almost**.
+## Branch model
 
-```
-/grill
+- `main` must remain releasable.
+- Each PRD owns one `feature/<spec-id>` branch.
+- Each vertical slice normally owns one commit.
+- The feature branch owns one draft PR from locked PRD through final promotion.
+- Parallel writes use isolated worktrees/branches only when they cannot overlap.
 
-I want to add [feature] so that [user] can [outcome].
-Interview me one question at a time. Recommend an answer for each.
-```
+## Cross-agent model
 
-| You say | Means |
-| ------- | ----- |
-| **Yes** | locked, move on |
-| **No** | wrong — adjust |
-| **Almost** | close — refine |
+The lifecycle is not a Claude command and not a Codex-specific prompt. `AGENTS.md`, `WORKFLOW.md`, the spec workspace, and role contracts are portable. Codex and Claude use native adapter files only for discovering the same instructions and subagents.
 
-→ writes `prd.md`. Next: `/autopilot`.
-
----
-
-## 3 · `/autopilot` — build it
-
-Hands-off. Slices the spec, builds each slice in its own subagent (tests first),
-reviews, refactors. Stops only for risky slices (auth, payments, security).
-
-```
-/autopilot
-
-Build everything in prd.md.
-```
-
-→ ships tested code. Next feature: `/idea` or `/grill`.
-
-**If it parks a slice**, handle it, then:
-
-```
-Resume autopilot. I handled the parked slice: [what you did].
-```
-
----
-
-## Cheat sheet
-
-| Want to… | Run |
-| -------- | --- |
-| Capture an idea | `/idea` |
-| Design a feature | `/grill` |
-| Build it | `/autopilot` |
-| Resume a build | `/autopilot` |
-
-**Rules:** `/clear` between phases · never `/compact` · vertical slices only ·
-tests never weakened · CI green before `/autopilot`.
-
-> Lost? Claude reads `CLAUDE.md` every session and tells you where you are.

@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schemas/execution-state.schema.json",
+  "schema_version": 1,
+  "spec_id": "{{SPEC_ID}}",
+  "state": "draft",
+  "branch": "feature/{{SPEC_ID}}",
+  "pull_request": null,
+  "promotion_mode": "merge_when_green",
+  "prd_approved_at": null,
+  "active_slice": null,
+  "repair_attempts": 0,
+  "last_updated": "{{DATE}}",
+  "blocker": null,
+  "slices": []
+}
+

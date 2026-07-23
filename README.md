@@ -2,109 +2,80 @@
 
 # Setup
 
-**A clean-sheet starting point for new projects, with an AI-native development framework built in.**
+**A conversation-first foundation for AI-driven software development.**
 
-Spec-driven · Test-driven · Subagent-orchestrated · Phone-ready
+PRD-led · Test-driven · Multi-agent · Codex + Claude · Main stays green
 
 </div>
 
 ---
 
-Clone this, rename it, and you start every project on the same rails: a
-disciplined flow that turns an idea into shipped, tested code with AI doing the
-heavy lifting and you staying in control of the decisions that matter.
+Use this repository as the template for a new product. Then work normally in chat:
 
-## How we develop
+> Let’s plan a new feature for [user] so they can [outcome].
 
-The whole method is three commands:
+The coding agent inspects the product, interviews you where judgment is required, recommends the strongest option, and finishes with a complete PRD. When you approve that PRD, the handoff is automatic:
 
-```
-/idea (optional)  →  /grill  →  /autopilot
-```
+`feature branch → vertical slices → TDD → slice commits → independent review → CI repair → merge to main`
 
-| Phase | Command | Human-in-the-loop? | Output |
-| ----- | ------- | ------------------ | ------ |
-| **1. Capture** | `/idea` | Yes (optional) | `idea.md` — problem, who it's for, rough shape |
-| **2. Design** | `/grill` | Yes | `prd.md` — interviewed into a complete spec |
-| **3. Build** | `/autopilot` | No (parks HITL slices) | shipped, tested, reviewed code |
+You do not create spec files, invoke workflow commands, or repeat the PRD in a second prompt. The branch, durable state, specialist agents, pull request, checks, review loop, and promotion are agent-owned.
 
-The principle: **think with a human, build with agents.** `/idea` and `/grill`
-are where judgment lives — you make the design decisions one question at a time.
-Once the PRD exists, `/autopilot` takes over: it breaks the spec into vertical
-slices, dispatches **one subagent per slice** (each writing tests first), reviews
-every slice with a read-only reviewer, and runs a final refactor pass before it
-calls the feature done.
+## The human contract
 
-### Why it's built this way
+| Phase | Human role | Agent result |
+|---|---|---|
+| Explore | Explain the goal and answer material questions | Repository-aware product options |
+| Lock PRD | Approve, reject, or refine decisions | Versioned PRD with acceptance criteria |
+| Deliver | No repeated prompting | Tested and independently reviewed feature |
+| Promote | No manual merge when policy allows | Green PR merged to `main` |
 
-- **Spec before code.** The PRD is the destination. Agents don't guess intent —
-  they implement an agreed design.
-- **Vertical tracer-bullet slices.** Each slice goes schema → API → UI → tests,
-  so every step is observable and shippable, never a half-wired layer.
-- **Test-driven, always.** RED → GREEN → REFACTOR. Tests are never weakened to
-  pass; the full suite + typecheck + lint + build gate every commit.
-- **Context isolation.** Each slice runs in a fresh subagent with only what it
-  needs (`CONTEXT.md`, relevant ADRs, `AGENTS.md`, the slice). The orchestrator
-  keeps only the returned summaries — no context rot.
-- **Decisions are durable.** Domain language lives in `CONTEXT.md`; hard-to-reverse
-  choices become ADRs in `docs/adr/`. Code + tests are the final source of truth.
+PRD approval means “continue through delivery and promotion” unless you explicitly say **plan only** or **PR only**. Promotion never means production deployment unless deployment is separately authorized.
 
-> Full walkthrough with copy-paste prompts: **[HOW_WE_BUILD.md](HOW_WE_BUILD.md)**
+## Why this is the 2026 pattern
 
-## Start a new project
+- **Durable intent.** The conversation becomes a versioned PRD, not ephemeral chat context.
+- **One feature branch.** The PRD, slices, implementation commits, review evidence, and PR stay together.
+- **Vertical slices.** Each commit proves an observable outcome across the necessary boundaries.
+- **TDD by construction.** Every behavior change follows RED → GREEN → REFACTOR.
+- **Independent review.** The implementation agent never approves its own slice.
+- **Context isolation.** Read-heavy analysis and reviews run in focused subagents that return summaries.
+- **Mechanical gates.** Tests, types, lint, build, security, and evals decide promotion—not agent confidence.
+- **Finite autonomy.** Recoverable failures loop; unsafe choices, permissions, and repeated failures stop with a precise blocker.
+
+## Codex and Claude
+
+`AGENTS.md` and `WORKFLOW.md` are the canonical, vendor-neutral contract.
+
+- Codex loads `AGENTS.md` and project agents from `.codex/agents/`.
+- Claude loads the thin `CLAUDE.md` adapter and agents from `.claude/agents/`.
+- Both use the same role contracts under `.agents/roles/`.
+
+Platform-specific files may configure discovery and permissions, but they must not redefine the lifecycle.
+
+## Repository map
+
+| Path | Purpose |
+|---|---|
+| `AGENTS.md` | Durable operating rules loaded by coding agents |
+| `WORKFLOW.md` | Conversation-to-main state machine |
+| `CLAUDE.md` | Thin Claude adapter to the canonical contract |
+| `.agents/roles/` | Vendor-neutral specialist responsibilities |
+| `.codex/agents/` | Project-scoped Codex agent definitions |
+| `.claude/agents/` | Claude agent adapters |
+| `specs/_template/` | Internal PRD and execution-state scaffold |
+| `CONTEXT.md` | Project vocabulary and invariants |
+| `docs/adr/` | Hard-to-reverse decisions |
+| `scripts/` and `tests/` | Mechanical workflow validation |
+
+## Template setup
+
+Create a private repository from this GitHub template and open it with either Codex or Claude. The agent will detect a fresh project and begin by understanding the product and its first feature. See [SETUP.md](SETUP.md) for Codespaces and local installation.
+
+Before the first product slice, the agent selects the real stack, replaces placeholder project commands in `AGENTS.md`, and makes CI green. The workflow itself is already testable with:
 
 ```bash
-gh repo create my-project --private --template FL-spec/Setup --clone
-cd my-project
-claude
+make check
 ```
 
-Claude reads `CLAUDE.md`, detects you're at a fresh start, and points you to
-`/idea` or `/grill`. From there, just follow the handoffs it prints at the end of
-each step.
+That command is for agents and CI; it is not part of the human feature-planning flow.
 
-> First, mark this repo as a template once: **Settings → Template repository** on
-> GitHub (or `gh repo edit FL-spec/Setup --template`).
-
-## Work from your phone
-
-This repo ships with a [dev container](.devcontainer/devcontainer.json) that
-pre-installs Claude Code in every GitHub Codespace — so you can drive the whole
-flow from a phone browser, no PC left running. See **[SETUP.md](SETUP.md)**.
-
-## What's in here
-
-```
-CLAUDE.md            Session guide — Claude reads this every session to navigate the flow
-README.md            You are here
-HOW_WE_BUILD.md      The method, with ready-to-copy prompts
-AGENTS.md            Repo conventions, commands, gotchas
-CONTEXT.md           Domain language — every fuzzy term pinned (filled in as you design)
-SETUP.md             Phone / Codespaces workflow
-docs/adr/            Architecture Decision Records (hard-to-reverse decisions)
-.claude/
-  skills/            idea · grill · autopilot · improve-code
-  agents/            slice-implementer · reviewer
-  settings.json      Git & secret guardrails (PreToolUse hook)
-.devcontainer/       Codespaces config with Claude Code preinstalled
-```
-
-## Conventions
-
-This template is stack-agnostic. Before your first `/autopilot`, set up the
-feedback loops the framework relies on and record the commands in
-[AGENTS.md](AGENTS.md):
-
-- Strict type checking (e.g. strict TypeScript)
-- A unit test runner (e.g. `vitest`)
-- E2E on the critical path (e.g. `playwright`)
-- Green CI
-- Guardrails: the git/secret `PreToolUse` hook in `.claude/settings.json`
-
-**Do not run `/autopilot` until CI is green and the guardrails are in place.**
-
----
-
-<div align="center">
-<sub>Built on the idea → grill → autopilot flow. The interview engine is adapted from Matt Pocock's <code>grill-with-docs</code>; everything else is ours.</sub>
-</div>
