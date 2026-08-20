@@ -6,6 +6,11 @@
 
 You drive the thinking. Agents drive the building. `/clear` between skills.
 
+**You don't have to type any of these.** Describe what you want in plain language and the
+always-on router works out which step you're on and continues from there — the commands below are
+for when you want direct control. The same lifecycle runs under Codex: `AGENTS.md` and
+`WORKFLOW.md` are the canonical contract, and `.agents/roles/` holds the roles both vendors use.
+
 The one idea underneath all of it: **a work item advances by one concrete next step at a time,
 and never skips a step it hasn't earned.** A thing that needs a fact gets research, not an
 opinion. A thing that needs a decision gets you, not a prototype. Documentation only gets
@@ -142,5 +147,16 @@ unblocked, and the ready queue reported back.
 
 **Rules:** `/clear` between skills · never `/compact` · vertical slices only · tests never
 weakened · specs updated in the same PR · never auto-merge.
+
+## Checking the template itself
+
+```bash
+make check
+```
+
+Validates that the canonical roles match their Claude and Codex adapters, every skill is
+invocable, every Markdown link resolves, wiki links survive the mirror, and
+`.sdlc/sdlc-config.yml` still matches its schema — then scans for secrets and runs the contract
+tests. CI runs it on every PR. Run it yourself after changing roles, skills, or the config shape.
 
 > Lost? Claude reads `CLAUDE.md` every session, works out where the project is, and tells you.

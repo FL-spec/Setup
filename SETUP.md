@@ -1,8 +1,9 @@
 # Working from your phone (GitHub Codespaces)
 
 This repo includes a dev container ([.devcontainer/devcontainer.json](.devcontainer/devcontainer.json))
-that automatically installs **Claude Code** in every Codespace, alongside the `gh` CLI and the
-Node, Python and Rust toolchains. No PC needs to stay running.
+that automatically installs **Claude Code and Codex** in every Codespace, alongside the `gh` CLI
+and the Node, Python and Rust toolchains. No PC needs to stay running, and both agents run the
+same lifecycle — `AGENTS.md` and `WORKFLOW.md` are the canonical contract for each.
 
 ## First time
 
@@ -16,8 +17,11 @@ Node, Python and Rust toolchains. No PC needs to stay running.
    ```
 
 5. Follow the login prompt to authenticate Claude Code (one-time, opens in the browser).
-6. On a brand-new project, run `/fl-bootstrap` first. On an existing one, just say hello —
-   Claude reads `CLAUDE.md`, detects where the project is, and tells you what to run.
+6. On a brand-new project, run `/fl-bootstrap` first. On an existing one, just say what you want
+   in plain language — the agent detects where the project is and continues from there.
+
+   To use Codex instead, run `codex` in the same terminal. It reads `AGENTS.md`, `WORKFLOW.md`
+   and `.codex/agents/`, which mirror the same roles.
 
 ## GitHub access
 
@@ -52,6 +56,7 @@ Don't edit pages in the GitHub Wiki UI: it's a mirror, and the next sync overwri
 - Reopen your existing Codespace from https://github.com/codespaces (faster than creating one).
 - Run `claude` and work as normal.
 - Worktrees created by `/fl-implement` live in `.worktrees/` and are gitignored.
+- Before committing template changes, run `make check` — CI runs the same gate.
 - Commit and push when done:
 
   ```bash

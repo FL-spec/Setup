@@ -10,11 +10,33 @@
 name: CI
 
 on:
+  pull_request:
   push:
     branches: [main]
-  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # --- The template's own contract. Always runs; never disable it. ---
+  # Checks the workflow itself: canonical roles match both vendor adapters, every
+  # skill is invocable, every Markdown link resolves, wiki links stay inside wiki/,
+  # and .sdlc/sdlc-config.yml still matches its schema.
+  template-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python3 -m pip install -r requirements-dev.txt
+      - run: make check
+
   # --- Preset: TypeScript / Node (pnpm) ---
   node:
     if: false # /fl-bootstrap flips this to `true` for the stack you use

@@ -52,8 +52,9 @@ With **no open PR** for the branch, tell the user and run read-only: do step 3, 
 as text, and stop — steps 4–6 have nowhere to publish.
 
 ### 3. Spawn the review
-Spawn a general-purpose subagent (the `Agent` tool, `subagent_type: general-purpose`). Its
-prompt: **read `<this skill's directory>/diff-review.md` and follow it**, with the fixed point
+Spawn the `diff-reviewer` subagent (canonical role: `.agents/roles/diff-reviewer.md`; use
+`subagent_type: diff-reviewer`, or `general-purpose` if that agent isn't available). Its prompt:
+**read `<this skill's directory>/diff-review.md` and follow it**, with the fixed point
 and any spec pointer the user gave. Wait for its structured report — `## Standards` / `## Spec` /
 `## Summary`, each finding carrying `File:`/`Line:`/`Side:` and an optional `Suggestion:` block.
 Relay its findings as they came; **the ranking and the wording are the subagent's.**

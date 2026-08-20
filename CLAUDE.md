@@ -1,4 +1,9 @@
-# CLAUDE.md — Session Guide
+# CLAUDE.md — Claude adapter & session guide
+
+**[AGENTS.md](AGENTS.md) and [WORKFLOW.md](WORKFLOW.md) are the canonical contract** — read them
+before acting, together with `.sdlc/policies/coding-standards.md`, `wiki/CONTEXT.md`, the active
+specs, and the relevant decision records. This file is the Claude-side adapter: it adds the
+session navigator and the `/clear` policy, and it never contradicts the two above.
 
 This repo runs a spec-driven, test-driven SDLC through the `fl-*` skills. Work **matures**
 through it: a diffuse idea becomes resolved work items, then documentation, then issues, then a
@@ -19,6 +24,11 @@ reviewed PR.
 **At the start of every session:** detect where the project actually is, tell the developer,
 run that step, and end by printing the next command and whether to `/clear`. Never leave them
 guessing what comes next.
+
+**You don't need to be given a command.** When the developer describes what they want in ordinary
+language, the always-on `fl-flow` router detects the step and continues from there — the `/fl-*`
+commands exist for when they want direct control, not as a prerequisite. Never tell someone to go
+run a command you could have run yourself.
 
 ---
 
@@ -78,6 +88,9 @@ developer's: a scope call, an outward-facing action (issues, PRs, comments), or 
 
 | File | Holds | Lifecycle |
 | --- | --- | --- |
+| `AGENTS.md` | the vendor-neutral agent contract | canonical; adapters never contradict it |
+| `WORKFLOW.md` | the delivery state machine, all agents | canonical |
+| `.agents/roles/` | canonical role definitions | mirrored by `.claude/agents/` + `.codex/agents/` |
 | `.sdlc/sdlc-config.yml` | every identifier, path template, and gate command | always current; skills read it, never hardcode |
 | `.sdlc/policies/coding-standards.md` | conventions, non-negotiables, open gaps, gotchas | always current |
 | `.sdlc/policies/wiki-conventions.md` | the shape of `wiki/` and `specs/` | always current |
@@ -107,10 +120,27 @@ spec's §7 Current State.
 - **Risky work is never handed to a subagent unattended** — auth, payments, security, large
   refactors, product judgment. Park it and ask.
 
-## 6 · The skills
+## 6 · The roles
+
+Subagents are dispatched as **canonical, vendor-neutral roles** defined in `.agents/roles/`;
+`.claude/agents/` are thin adapters onto them, and `.codex/agents/` mirror them for Codex. Keep
+the main conversation on product decisions, orchestration and results — **return summaries from
+subagents, never raw logs.**
+
+| Role | Owns | Dispatched by |
+| --- | --- | --- |
+| `spec-analyst` | gap audit before docs are written | `/fl-pm` synthesize, `/fl-implement` step 1 |
+| `slice-planner` | reviewed docs → vertical slices | `/fl-pm` issues |
+| `slice-implementer` | the only writer for one slice | `/fl-implement` step 4 |
+| `reviewer` | read-only review of one slice | `/fl-implement` step 5 |
+| `diff-reviewer` | two-axis Standards + Spec review | `/fl-pr-review` |
+| `integration-verifier` | acceptance → evidence contract | `/fl-pm` reconcile |
+
+## 7 · The skills
 
 | Skill | Does |
 | --- | --- |
+| `fl-flow` | always-on router — detects the step from plain language (no slash command) |
 | `/fl-bootstrap` | one-time setup: config, gates, CI, labels, board, seeded docs |
 | `/fl-pm` | owns the backlog and the docs — plan · synthesize · issues · reconcile |
 | `/fl-brainstorm` | relentless one-question interview → resolved work items (writes nothing) |
@@ -122,5 +152,18 @@ spec's §7 Current State.
 
 `/fl-pm` is the hub: it holds the plan, and every other skill either feeds it findings or
 consumes what it produced. **When in doubt, start there.**
+
+## 8 · The template's own gates
+
+Separate from your project's `quality_gates`, this repository verifies **itself**:
+
+```bash
+make check
+```
+
+It runs the workflow validator (canonical roles match both vendor adapters, every skill is
+invocable, every Markdown link resolves, wiki links stay inside `wiki/`, the config still matches
+`schemas/sdlc-config.schema.json`), a secret scan, and the contract tests. CI runs it on every PR.
+**If you change the roles, the skills, or the config's shape, run it before you commit.**
 
 New to the flow? **[HOW_WE_BUILD.md](HOW_WE_BUILD.md)** has the ready-to-copy prompts.

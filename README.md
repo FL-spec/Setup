@@ -4,7 +4,7 @@
 
 **A clean-sheet starting point for new projects, with a full AI-native SDLC built in.**
 
-Spec-driven · Test-driven · Subagent-orchestrated · GitHub-native · Phone-ready
+Spec-driven · Test-driven · Cross-agent · GitHub-native · Self-verifying · Phone-ready
 
 `v2.0`
 
@@ -71,6 +71,15 @@ That last part is what keeps a plan coherent instead of a set of parallel monolo
   become ADRs. Superseded, never deleted.
 - **GitHub is the state store.** Issues, sub-issues, PRs and review threads — not a local
   progress file that goes stale the moment two sessions run at once.
+- **Cross-agent by construction.** `AGENTS.md` and `WORKFLOW.md` are the canonical contract, and
+  the six roles in `.agents/roles/` are vendor-neutral. `.claude/agents/` and `.codex/agents/` are
+  thin adapters, so Claude and Codex run the same lifecycle — and `make check` fails if they ever
+  drift apart.
+- **Commands are optional.** The always-on `fl-flow` router detects the step from plain language;
+  the `/fl-*` commands are there when you want direct control, not as a prerequisite.
+- **The template verifies itself.** `make check` validates that the roles match their adapters,
+  every skill is invocable, every Markdown link resolves, wiki links survive the mirror, and the
+  config still matches its JSON Schema. CI runs it on every PR.
 
 > Full walkthrough with copy-paste prompts: **[HOW_WE_BUILD.md](HOW_WE_BUILD.md)**
 
@@ -102,6 +111,8 @@ prints the next command.
 ### Requirements
 
 - `gh` authenticated. Issues and PRs are required.
+- Python 3.11+ for the template's own gates (`make check`); `make install-dev` for the two
+  optional libraries that enable deep config validation.
 - A project board is **optional** — `github.project.enabled: false` and the flow works from issue
   state alone. With a board, `gh` needs `read:project` and `write:project`
   (`gh auth refresh -s read:project,write:project`).
@@ -115,27 +126,36 @@ running. See **[SETUP.md](SETUP.md)**.
 ## What's in here
 
 ```
-CLAUDE.md            Session navigator — where the project is, what to run, when to /clear
-AGENTS.md            Pointer file for non-Claude tools
+AGENTS.md            Canonical, vendor-neutral agent contract — every agent reads this
+WORKFLOW.md          Canonical delivery state machine (mermaid), all agents
+CLAUDE.md            Claude adapter: session navigator, /clear policy, role dispatch
 HOW_WE_BUILD.md      The method, with ready-to-copy prompts
 README.md            You are here
 SETUP.md             Phone / Codespaces workflow
+Makefile             make check — the template's own gates
+.agents/roles/       Canonical role definitions (vendor-neutral)
+.codex/              Codex adapters onto those roles
+schemas/             JSON Schema for .sdlc/sdlc-config.yml
+scripts/             validate_workflow.py · scan_secrets.py
+tests/               The template's contract tests
 .sdlc/
   sdlc-config.yml    Every identifier, path template and gate command — skills read this
   policies/          coding-standards.md · wiki-conventions.md
 .claude/
-  skills/            fl-bootstrap · fl-pm · fl-brainstorm · fl-research · fl-prototype
-                     fl-diagnose · fl-implement · fl-pr-review
+  skills/            fl-flow (always-on router) · fl-bootstrap · fl-pm · fl-brainstorm
+                     fl-research · fl-prototype · fl-diagnose · fl-implement · fl-pr-review
+  agents/            Claude adapters onto .agents/roles/
   hooks/             git-guardrails.sh — blocks force-push, hard reset, .env commits
   settings.json      PreToolUse hook wiring
 .github/
-  workflows/         ci.yml (stack presets) · sync-wiki.yml
+  workflows/         ci.yml (template contract + stack presets) · security.yml · sync-wiki.yml
   scripts/           flatten_wiki.py — publishes wiki/ to the GitHub Wiki
+  pull_request_template.md
 wiki/
   CONTEXT.md         Domain glossary — loaded into every subagent
   prd/               Master + child PRDs, dated FDRs
   architecture/      System shape, dated ADRs
-  plans/             Plan folders: work items and their next steps
+  plans/             Plan folders: work items, acceptance and verification records
   reports/           Point-in-time reviews
 specs/               Exact contracts, as-built — 00-contracts.md + one per module
 .devcontainer/       Codespaces config with Claude Code preinstalled
@@ -143,8 +163,22 @@ specs/               Exact contracts, as-built — 00-contracts.md + one per mod
 
 ## Upgrading from v1
 
-v1's `/idea → /grill → /autopilot` is replaced, not deprecated in place — the four v1 skills and
-both agent files are gone. The mapping:
+v2.0 folds in **both** earlier lines of work: the original `/idea → /grill → /autopilot` flow and
+the conversation-first cross-agent delivery contract that followed it.
+
+From the conversation-first work, v2.0 **keeps**: `AGENTS.md` and `WORKFLOW.md` as the canonical
+vendor-neutral contract, the `.agents/roles/` ↔ `.claude/agents/` ↔ `.codex/agents/` structure,
+command-free invocation (now the `fl-flow` router), the secret scanner and security workflow, the
+PR template, and the self-validating template contract behind `make check`.
+
+It **changes**: `specs/` now means the permanent as-built contract layer, so the per-feature
+workspace moved to `wiki/plans/<NN>-<slug>/` — where `acceptance.md` and `verification.md` keep
+the criterion-to-evidence trail. The execution-state JSON is gone: GitHub issues and PRs are the
+state store, and the JSON Schema now validates `.sdlc/sdlc-config.yml` instead. The
+`test-architect` role is gone — the slice implementer owns its own first failing test. And
+promotion never auto-merges: the PR is where automation stops.
+
+From the v1 flow, the mapping:
 
 | v1 | v2 |
 | --- | --- |

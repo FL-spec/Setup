@@ -24,6 +24,10 @@ exists. An issue that asks for code that is already there is worse than no issue
 
 ## 2. Cut vertical slices
 
+This is the `slice-planner` role (`.agents/roles/slice-planner.md`). Every slice names its
+acceptance criteria, dependencies, likely file surface, first failing test, gates, and whether
+parallel work on it is safe.
+
 Each issue spans **Domain → Infrastructure → Service → API/UI** for one narrow behavior within
 a **single module** (from `.sdlc/sdlc-config.yml`'s `modules:`). A behavior spanning two
 modules is two dependent issues, one per module, unless the change in one is trivial.

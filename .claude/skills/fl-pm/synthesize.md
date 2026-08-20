@@ -6,7 +6,10 @@ the exact file templates and decision placement — this file says only what cha
 synthesize pass.
 
 **Audit against the codebase before writing.** Check the actual modules and storage first — a
-document that contradicts the code is worse than no document.
+document that contradicts the code is worse than no document. This is the `spec-analyst` role
+(`.agents/roles/spec-analyst.md`): find ambiguity, missing observable acceptance criteria, hidden
+scope, conflicting requirements and affected invariants, and separate real human decisions from
+assumptions the repository already settles.
 
 ## 1. Domain language → `wiki/CONTEXT.md`
 

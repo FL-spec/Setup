@@ -84,6 +84,8 @@ Read `.sdlc/policies/wiki-conventions.md` first and follow its templates exactly
 - `wiki/Home.md` and `wiki/_Sidebar.md` — every file above, linked. **This is the step people skip
   and the wiki never recovers from.**
 
+Leave `wiki/plans/_template/` alone — `/fl-pm` copies from it for every new plan.
+
 ## 5. GitHub state — ask before each
 
 Everything below is **outward-facing**. Present the full list of what you're about to create and
@@ -135,8 +137,14 @@ nudge, not a blocker.
 Run, and show the output:
 ```bash
 grep -n '<[A-Z_]*>' .sdlc/sdlc-config.yml   # must return nothing
+make install-dev && make check              # the template's own contract
 ```
 plus every gate command, and a `gh label list`.
+
+`make check` validates that the canonical roles still match both vendor adapters, every skill is
+invocable, every Markdown link resolves, wiki links stay inside `wiki/`, and the config you just
+wrote matches `schemas/sdlc-config.schema.json`. **A bootstrap that leaves this red isn't
+finished.**
 
 Report: the config written, the modules registered, the gates verified (and any left as `TODO`
 with the Open-gaps line that records why), the labels and board created, and what still needs a

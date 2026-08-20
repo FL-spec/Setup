@@ -4,6 +4,11 @@ Two entry points that interlock: the post-merge pass runs the triage as its last
 
 ## Post-merge (called from `/fl-implement` step 9, or on demand)
 
+This is the `integration-verifier` role (`.agents/roles/integration-verifier.md`): map every
+acceptance criterion to concrete evidence in the plan's `acceptance.md`, and record the exact
+commands and results in its `verification.md` (templates in `wiki/plans/_template/`).
+**Agent confidence is not evidence.**
+
 After an issue's PR merges:
 
 1. `git diff` review of what actually landed.

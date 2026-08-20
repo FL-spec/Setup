@@ -25,6 +25,13 @@ Below the table, one section per work item holding only its finding or open ques
 independent, and its named dependencies. Keep the map lean — it's the thing you re-read every
 session.
 
+Templates for all three files live in `wiki/plans/_template/`. Copy them rather than improvising
+a layout.
+
+**`acceptance.md`** and **`verification.md`** — created once a plan reaches `create-issues`. The
+criterion-to-evidence trail the `integration-verifier` role fills in before promotion. A plan that
+ships without them has no record that its acceptance criteria were ever actually met.
+
 **`<N>-<slug>.md`** — a work item's detail file, created the first time that item receives
 substantive work. This is where everything a next step returns accumulates: research findings
 with their sources, a diagnosis and its evidence, a prototype's verdict, a brainstorm's

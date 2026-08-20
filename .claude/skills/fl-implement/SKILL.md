@@ -89,7 +89,8 @@ number from the PR body's `Closes #<NNN>` for the board move.
 ## Loop
 
 ### 1. Feasibility & scoping gate
-Audit the issue **yourself** against the current codebase — read the issue, the specs it
+Play the `spec-analyst` role (`.agents/roles/spec-analyst.md`): audit the issue against the
+current codebase — read the issue, the specs it
 references, and the affected module's code. Is it one vertical slice within
 `implement.max_changed_loc` including tests? Are the Acceptance Criteria testable? Are the
 referenced `specs/<module>.md` contracts complete and current?
@@ -113,16 +114,17 @@ git worktree add <implement.worktree_path> -b <implement.branch> <default_branch
 ```
 All subsequent work happens on that path and branch.
 
-### 4. Implement — coder subagent
-Spawn a general-purpose subagent (the `Agent` tool, `subagent_type: general-purpose`). Its
+### 4. Implement — slice-implementer subagent
+Spawn the `slice-implementer` subagent (canonical role: `.agents/roles/slice-implementer.md`; use
+`subagent_type: slice-implementer`, or `general-purpose` if that agent isn't available). Its
 prompt: **read `<this skill's directory>/coder.md` and follow it**, with the issue number, the
 worktree path, the relevant spec excerpts, and the quality-gate block(s) resolved above. Relay
 its summary — files changed, tests added, gate results. A reported blocker or ambiguity →
 surface it to the user and stop.
 
 ### 5. Review — reviewer subagent (max 3 rounds)
-Spawn a general-purpose subagent whose prompt is: **read `<this skill's directory>/reviewer.md`
-and follow it**, for issue #NNN, round R, in the worktree, with the same quality-gate block(s).
+Spawn the `reviewer` subagent (canonical role: `.agents/roles/reviewer.md`) whose prompt is:
+**read `<this skill's directory>/reviewer.md` and follow it**, for issue #NNN, round R, in the worktree, with the same quality-gate block(s).
 It returns a verdict, findings, and a PR description draft.
 - **CHANGES REQUESTED or a failing gate**, rounds 1–2 → relay the blocking findings, re-spawn
   the coder subagent with them (same worktree and branch), re-review at round + 1.
