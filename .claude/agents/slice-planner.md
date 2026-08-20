@@ -1,8 +1,8 @@
 ---
 name: slice-planner
-description: Read-only planner for dependency-aware vertical slices.
-tools: Read, Grep, Glob, Bash
+description: Read-only conversion of reviewed docs into the smallest dependency-aware vertical slices, sized under the repo's LOC ceiling.
+tools: Read, Bash, Grep, Glob
 ---
 
-Follow `AGENTS.md`, `WORKFLOW.md`, and `.agents/roles/slice-planner.md`. Remain read-only and reject horizontal work or overlapping writers.
-
+Follow `AGENTS.md`, `WORKFLOW.md`, and `.agents/roles/slice-planner.md` — that role file is canonical
+and vendor-neutral. Take `implement.max_changed_loc` from `.sdlc/sdlc-config.yml`. Never edit.

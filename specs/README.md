@@ -1,21 +1,30 @@
-# Feature specifications
+# specs/
 
-Each feature owns one durable workspace under `specs/<spec-id>/` and one `feature/<spec-id>` branch.
+The **exact-contract layer** — schemas, interfaces, file formats — that implementers follow
+**blindly**. One file per module in `.sdlc/sdlc-config.yml`'s `modules:`, plus
+[`00-contracts.md`](00-contracts.md) for anything held between two or more modules.
 
-The agent creates the workspace automatically during the planning conversation. The human owns product decisions and PRD approval; the agent owns the repository state.
+`/fl-bootstrap` seeds one file per module from the skeleton below; `/fl-pm` keeps them current,
+and `/fl-pm`'s post-merge reconcile updates §7 after every merge.
 
-## Required files
+## The skeleton — every module spec has these seven sections
 
-| File | Purpose |
-|---|---|
-| `prd.md` | Approved outcome, scope, quality boundaries, and acceptance criteria |
-| `plan.md` | Architecture, risks, rollout, rollback, and verification plan |
-| `slices.md` | Dependency-aware vertical delivery units |
-| `acceptance.md` | Criterion-to-evidence traceability |
-| `verification.md` | Exact final commands and observed results |
-| `execution-state.json` | Branch, PR, phase, promotion, and slice state |
+```
+1. Purpose & boundary      — what the module owns; explicitly what it must not do
+2. External surface        — the exact contract, module-shaped
+3. Consumed & produced contracts — pointers into 00-contracts.md, not restatements
+4. Invariants              — numbered and module-prefixed (WEB-INV-1, API-INV-1),
+                             each individually testable
+5. Configuration           — env vars, ports, defaults
+6. Decisions               — links to the ADRs that bear on the module
+7. Current State           — every divergence, defect and surprise
+```
 
-Lifecycle: `draft → ready → planning → executing → verifying → promoting → completed`.
+## The rule that makes specs worth having
 
-Any active state may move to `blocked`. Completed specs remain as historical product and verification records.
+Specs describe the system **as-built, never as-intended.** Where the code and a design document
+disagree, **the code wins**, and the divergence is recorded in §7 with an ADR explaining it.
 
+A pull request that changes behaviour a spec describes **updates that spec in the same PR** —
+see the non-negotiable in [`.sdlc/policies/coding-standards.md`](../.sdlc/policies/coding-standards.md).
+A spec that lags a merged change is worse than no spec, because the next implementer trusts it.

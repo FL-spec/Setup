@@ -1,44 +1,162 @@
-# How we build
+# How We Build
 
-## One continuous conversation
+```
+/fl-bootstrap → /fl-pm ⇄ (brainstorm · research · prototype · diagnose) → /fl-pm → /fl-implement → /fl-pm
+```
 
-Start with the product outcome:
+You drive the thinking. Agents drive the building. `/clear` between skills.
 
-> I want to plan a feature that lets [user] achieve [outcome].
+**You don't have to type any of these.** Describe what you want in plain language and the
+always-on router works out which step you're on and continues from there — the commands below are
+for when you want direct control. The same lifecycle runs under Codex: `AGENTS.md` and
+`WORKFLOW.md` are the canonical contract, and `.agents/roles/` holds the roles both vendors use.
 
-The agent inspects the current product and interviews you only where judgment is needed. For each material choice it recommends the strongest answer and explains the trade-off. It creates the feature branch and writes the PRD as decisions are agreed.
+The one idea underneath all of it: **a work item advances by one concrete next step at a time,
+and never skips a step it hasn't earned.** A thing that needs a fact gets research, not an
+opinion. A thing that needs a decision gets you, not a prototype. Documentation only gets
+written once the findings have stopped moving, and issues only get cut once you've read the
+documentation.
 
-When the PRD is complete:
+---
 
-- **Approved / lock it / go ahead** — lock the PRD and continue automatically through implementation and merge.
-- **Almost** — revise the identified decisions, then present it again.
-- **Plan only** — preserve the PRD and stop without implementation.
-- **PR only** — implement and verify, but leave the green PR ready instead of merging.
+## 0 · `/fl-bootstrap` — once per project
 
-There is no separate build prompt.
+```
+/fl-bootstrap
+```
 
-## What happens after approval
+Interviews you on stack and modules, writes the config and the coding standards, wires the
+quality gates and CI, creates the labels and board, and seeds `wiki/` + `specs/`. Nothing else
+runs until this is done.
 
-| Stage | Agent behavior | Durable evidence |
-|---|---|---|
-| Plan | Map criteria and dependencies into vertical slices | `plan.md`, `slices.md` |
-| TDD | RED → GREEN → REFACTOR one slice | Tests and slice commit |
-| Review | Separate read-only agent checks behavior and risk | Review findings |
-| Repair | Writer fixes blockers and reruns gates | Updated commit/evidence |
-| Verify | Full repository and specialist checks | `verification.md` |
-| Promote | Reconcile `main`, require green checks, merge | PR and final commit |
+→ a configured repo. Next: `/fl-pm`.
 
-The orchestrator continues until the completion contract is met or a mandatory blocker requires a human decision. It does not stop merely because one test or review failed; recoverable failures re-enter the loop.
+---
 
-## Branch model
+## 1 · `/fl-pm` — open a plan
 
-- `main` must remain releasable.
-- Each PRD owns one `feature/<spec-id>` branch.
-- Each vertical slice normally owns one commit.
-- The feature branch owns one draft PR from locked PRD through final promotion.
-- Parallel writes use isolated worktrees/branches only when they cannot overlap.
+```
+/fl-pm
 
-## Cross-agent model
+I want to build [thing] for [who] so they can [outcome].
+```
 
-The lifecycle is not a Claude command and not a Codex-specific prompt. `AGENTS.md`, `WORKFLOW.md`, the spec workspace, and role contracts are portable. Codex and Claude use native adapter files only for discovering the same instructions and subagents.
+`/fl-pm` owns the backlog and the docs. With nothing open, it runs `/fl-brainstorm` for you.
 
+→ `wiki/plans/<NN>-<slug>/0-plan_map.md`. Next: advance an item.
+
+---
+
+## 2 · The maturity skills — advance one work item
+
+`/fl-pm` picks the next step and dispatches. You rarely call these directly.
+
+| Next step | Skill | For |
+| --- | --- | --- |
+| brainstorm | `/fl-brainstorm` | the item is still diffuse |
+| research | `/fl-research` | an external fact decides it |
+| prototype | `/fl-prototype` | it can't be settled on paper |
+| diagnose | `/fl-diagnose` | something is wrong and the cause is unknown |
+| decide | you | two named options, nothing left to learn |
+
+**In a brainstorm you answer Yes / No / Almost:**
+
+| You say | Means |
+| --- | --- |
+| **Yes** | locked, move on |
+| **No** | wrong — discard and adjust |
+| **Almost** | close — refine until it's a Yes |
+
+→ findings. Take them back: `/fl-pm`, "here's what came back from the research."
+
+---
+
+## 3 · `/fl-pm` — write it down, then cut it up
+
+Two separate steps, deliberately:
+
+```
+/fl-pm
+
+Synthesize this plan.
+```
+→ PRDs, specs, ADRs/FDRs in `wiki/` and `specs/`. **Then it stops.** You read them.
+
+```
+Looks right. Cut the issues.
+```
+→ vertical-slice GitHub issues, sized under 300 LOC, dependency-linked, labelled, on the board.
+
+---
+
+## 4 · `/fl-implement <N>` — build it
+
+```
+/fl-implement 14
+```
+
+Feasibility gate → worktree → coder subagent (tests first) → reviewer subagent (max 3 rounds) →
+issue checklist ticked → **PR opened, never merged**.
+
+Several at once, one branch, one PR:
+```
+/fl-implement 14 to 18
+```
+
+When the PR draws review comments:
+```
+/fl-implement 231        # the PR number — runs the feedback loop
+```
+Every thread ends fixed-and-replied or declined-and-replied, and resolved.
+
+Want a deeper review of your own first?
+```
+/fl-pr-review main
+```
+→ a real GitHub review, inline comments and suggestions, `COMMENT` or `REQUEST_CHANGES`.
+
+---
+
+## 5 · `/fl-pm` — after you merge
+
+```
+/fl-pm
+
+Post-merge for #14.
+```
+→ `specs/` §7 Current State reconciled, issue closed, worktree removed, board moved, dependents
+unblocked, and the ready queue reported back.
+
+---
+
+## Cheat sheet
+
+| Want to… | Run |
+| --- | --- |
+| Set up a new repo | `/fl-bootstrap` |
+| Open a plan / know what's next | `/fl-pm` |
+| Shape a fuzzy idea | `/fl-brainstorm` |
+| Settle an external fact | `/fl-research` |
+| Try a design out | `/fl-prototype` |
+| Find out why something's broken | `/fl-diagnose` |
+| Write the docs / cut the issues | `/fl-pm` |
+| Build an issue | `/fl-implement <N>` |
+| Review a branch | `/fl-pr-review <base>` |
+| Handle PR comments | `/fl-implement <PR#>` |
+| Reconcile after a merge | `/fl-pm` |
+
+**Rules:** `/clear` between skills · never `/compact` · vertical slices only · tests never
+weakened · specs updated in the same PR · never auto-merge.
+
+## Checking the template itself
+
+```bash
+make check
+```
+
+Validates that the canonical roles match their Claude and Codex adapters, every skill is
+invocable, every Markdown link resolves, wiki links survive the mirror, and
+`.sdlc/sdlc-config.yml` still matches its schema — then scans for secrets and runs the contract
+tests. CI runs it on every PR. Run it yourself after changing roles, skills, or the config shape.
+
+> Lost? Claude reads `CLAUDE.md` every session, works out where the project is, and tells you.

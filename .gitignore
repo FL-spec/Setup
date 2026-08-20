@@ -15,3 +15,6 @@ node_modules/
 # Build output
 dist/
 build/
+
+# fl-* worktrees — issue branches and prototypes live here, never committed
+.worktrees/

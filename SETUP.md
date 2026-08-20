@@ -1,32 +1,78 @@
-# Local and Codespaces setup
+# Working from your phone (GitHub Codespaces)
 
-This template supports both Codex and Claude Code.
+This repo includes a dev container ([.devcontainer/devcontainer.json](.devcontainer/devcontainer.json))
+that automatically installs **Claude Code and Codex** in every Codespace, alongside the `gh` CLI
+and the Node, Python and Rust toolchains. No PC needs to stay running, and both agents run the
+same lifecycle — `AGENTS.md` and `WORKFLOW.md` are the canonical contract for each.
 
-## GitHub Codespaces
+## First time
 
-1. Create a repository from `FL-spec/Setup`.
-2. Open **Code → Codespaces → Create codespace on main**.
-3. Wait for the dev container to install both CLIs.
-4. Start either `codex` or `claude` and authenticate in the browser.
-5. Describe the product or feature normally in chat.
+1. Open the repo on GitHub.
+2. Tap the green **Code** button → **Codespaces** tab → **Create codespace on main**.
+3. Wait for the dev container to build (it installs Claude Code on first create).
+4. In the Codespace terminal:
 
-The repository instructions handle PRD creation and the delivery loop. You do not invoke a workflow command.
+   ```bash
+   claude
+   ```
 
-## Local installation
+5. Follow the login prompt to authenticate Claude Code (one-time, opens in the browser).
+6. On a brand-new project, run `/fl-bootstrap` first. On an existing one, just say what you want
+   in plain language — the agent detects where the project is and continues from there.
 
-Use the official installation method for the agent you choose:
+   To use Codex instead, run `codex` in the same terminal. It reads `AGENTS.md`, `WORKFLOW.md`
+   and `.codex/agents/`, which mirror the same roles.
+
+## GitHub access
+
+The `fl-*` flow is GitHub-native, so `gh` needs to be authenticated:
 
 ```bash
-npm install --global @openai/codex
-npm install --global @anthropic-ai/claude-code
+gh auth status
 ```
 
-Authenticate interactively and open the repository root. Keep GitHub CLI authenticated when you want the agent to create branches, PRs, and promotions.
+A Codespace usually inherits a token with `repo` scope, which covers issues and pull requests —
+everything except the project board. If you use a board:
 
-## Operating notes
+```bash
+gh auth refresh -s read:project,write:project
+```
 
-- Stop idle Codespaces to avoid charges.
-- Use a fresh feature conversation for a new PRD.
-- The durable branch/spec state allows a later session or either supported agent to resume.
-- Branch protection or required human review may pause automatic promotion; the agent must never bypass it.
+If you'd rather not, set `github.project.enabled: false` in `.sdlc/sdlc-config.yml`. The flow
+works from issue state alone; only the board moves are skipped.
 
+## The wiki mirror
+
+`wiki/` is mirrored to the repo's GitHub Wiki by `.github/workflows/sync-wiki.yml` on every push
+to `main` that touches it. **The wiki has to be initialized once by hand** — open the repo's
+**Wiki** tab and create any page. Until you do, the sync workflow skips with a warning instead of
+failing, so a fresh clone is never red; nothing else in the flow depends on the mirror.
+
+Don't edit pages in the GitHub Wiki UI: it's a mirror, and the next sync overwrites them. Edit
+`wiki/` in the repo.
+
+## Day to day
+
+- Reopen your existing Codespace from https://github.com/codespaces (faster than creating one).
+- Run `claude` and work as normal.
+- Worktrees created by `/fl-implement` live in `.worktrees/` and are gitignored.
+- Before committing template changes, run `make check` — CI runs the same gate.
+- Commit and push when done:
+
+  ```bash
+  git add .
+  git commit -m "your message"
+  git push
+  ```
+
+## Tips
+
+- **Phone browser:** the Codespaces web editor works in mobile Safari/Chrome. Request the desktop
+  site for a better terminal experience.
+- **Stop when idle:** Codespaces bill by usage. Stop yours from https://github.com/codespaces
+  when you're done. Stopped Codespaces keep your files; they just don't run.
+- **If Claude Code isn't found** after opening a Codespace, install it manually:
+
+  ```bash
+  npm install -g @anthropic-ai/claude-code
+  ```
