@@ -126,8 +126,9 @@ A CI that checks something different from what the reviewer subagent runs is how
 green locally and red on GitHub. Delete the preset jobs for stacks you're not using.
 
 If `wiki_sync.enabled` is true, `.github/workflows/sync-wiki.yml` needs nothing — but tell the
-user the GitHub Wiki must be **initialized once** (create any page in the repo's Wiki tab) or the
-first sync run fails on a missing wiki repo.
+user the GitHub Wiki must be **initialized once** (create any page in the repo's Wiki tab) before
+the mirror works. Until then the workflow skips with a warning rather than failing, so this is a
+nudge, not a blocker.
 
 ## 7. Verify and report
 

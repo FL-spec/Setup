@@ -42,8 +42,19 @@ jobs:
           COMMIT_MSG: ${{ github.event.head_commit.message }}
           COMMIT_SHA: ${{ github.sha }}
         run: |
+          WIKI_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git"
+
+          # A repo's wiki repository does not exist until someone creates the first
+          # page by hand (repo -> Wiki tab -> Create the first page). Until then the
+          # clone below fails. That is a setup step, not a broken build, so skip with
+          # a warning rather than failing every push on a freshly cloned template.
+          if ! git ls-remote "$WIKI_URL" >/dev/null 2>&1; then
+            echo "::warning title=Wiki not initialized::This repo has no wiki yet, so wiki/ was not mirrored. Open the repo's Wiki tab and create any page once, then re-run this workflow. Nothing else in the flow depends on it."
+            exit 0
+          fi
+
           # Clone the GitHub Wiki repository
-          git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git" temp_wiki
+          git clone "$WIKI_URL" temp_wiki
 
           # Navigate into the cloned wiki directory
           cd temp_wiki

@@ -41,8 +41,8 @@ works from issue state alone; only the board moves are skipped.
 
 `wiki/` is mirrored to the repo's GitHub Wiki by `.github/workflows/sync-wiki.yml` on every push
 to `main` that touches it. **The wiki has to be initialized once by hand** — open the repo's
-**Wiki** tab and create any page — or the first sync run fails because the wiki repository
-doesn't exist yet.
+**Wiki** tab and create any page. Until you do, the sync workflow skips with a warning instead of
+failing, so a fresh clone is never red; nothing else in the flow depends on the mirror.
 
 Don't edit pages in the GitHub Wiki UI: it's a mirror, and the next sync overwrites them. Edit
 `wiki/` in the repo.
