@@ -9,12 +9,15 @@
 # Logs
 *.log
 
-# Dependencies
+# Dependencies — one entry per stack preset in .github/workflows/ci.yml
 node_modules/
+.venv/
+venv/
 
 # Build output
 dist/
 build/
+target/
 
 # fl-* worktrees — issue branches and prototypes live here, never committed
 .worktrees/

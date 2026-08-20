@@ -138,8 +138,8 @@ prints the next command.
 - `gh` authenticated. Issues and PRs are required.
 - Python 3.11+ for the template's own gates (`make check`); `make install-dev` for the two
   optional libraries that enable deep config validation.
-- [Vale](https://vale.sh/) for the prose gate (`make docs`), plus `make docs-sync` once to
-  download the rule packages. CI installs it for you.
+- [Vale](https://vale.sh/) for the prose gate (`make docs`), which downloads its rule
+  packages on first run. `make docs-sync` re-downloads them. CI installs it for you.
 - A project board is **optional**—`github.project.enabled: false` and the flow works from issue
   state alone. With a board, `gh` needs `read:project` and `write:project`
   (`gh auth refresh -s read:project,write:project`).

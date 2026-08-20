@@ -15,16 +15,26 @@ DOC_SOURCES = $(shell git ls-files '*.md' | grep -vE '^(\.claude|\.agents|\.code
 install-dev:
 	@$(PYTHON) -m pip install -r requirements-dev.txt
 
-# Download the Vale rule packages named in .vale.ini. Run once per checkout.
+# `vale sync` downloads the packages named in .vale.ini into StylesPath. Treating the
+# first of them as a build artifact is what lets `make docs` work on a fresh clone: a
+# reader who runs the gate before reading the README gets the packages rather than
+# "style 'Google' does not exist on StylesPath". Adding a package to .vale.ini means
+# running `make docs-sync` by hand, because this directory already exists by then.
+VALE_PACKAGE_CACHE = .vale/styles/Google
+
+$(VALE_PACKAGE_CACHE):
+	@$(VALE) sync
+
+# Re-download the Vale rule packages named in .vale.ini.
 docs-sync:
 	@$(VALE) sync
 
 # The prose gate. Fails on errors and warnings.
-docs:
+docs: | $(VALE_PACKAGE_CACHE)
 	@$(VALE) --minAlertLevel=warning $(DOC_SOURCES)
 
 # Advisory: everything the gate lets through. Read it, act on what improves a sentence.
-docs-suggestions:
+docs-suggestions: | $(VALE_PACKAGE_CACHE)
 	@$(VALE) --no-exit --minAlertLevel=suggestion $(DOC_SOURCES)
 
 test:
