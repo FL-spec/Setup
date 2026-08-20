@@ -3,18 +3,18 @@
 > `/fl-bootstrap` fills this in with the project's real name and summary, and `/fl-pm` keeps it
 > current. A doc that isn't linked from here or from `_Sidebar.md` doesn't exist.
 
-**[Project name]** — _[one-line summary]._
+**[Project name]**—_[one-line summary]._
 
 ## Start here
 
-- **[CONTEXT.md](CONTEXT.md)** — the domain glossary. Read this first.
-- **[Master PRD](prd/00-master-prd.md)** — what we're building and why.
-- **[Architecture](architecture/00-architecture.md)** — the system's shape.
+- **[CONTEXT.md](CONTEXT.md)**—the domain glossary. Read this first.
+- **[Master PRD](prd/00-master-prd.md)**—what we're building and why.
+- **[Architecture](architecture/00-architecture.md)**—the system's shape.
 
 ## Product
 
 - [Master PRD](prd/00-master-prd.md)
-- _child PRDs — one per module_
+- _child PRDs—one per module_
 - [Functional decisions (FDRs)](prd/decisions/0000-template.md)
 
 ## Architecture
@@ -24,7 +24,7 @@
 
 ## Contracts
 
-Technical contracts live outside the wiki, in **`specs/`** — one file per module, plus
+Technical contracts live outside the wiki, in **`specs/`**—one file per module, plus
 `specs/00-contracts.md` for anything held between two or more modules.
 
 ## Plans

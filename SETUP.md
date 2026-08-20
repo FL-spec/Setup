@@ -1,9 +1,9 @@
 # Working from your phone (GitHub Codespaces)
 
 This repo includes a dev container ([.devcontainer/devcontainer.json](.devcontainer/devcontainer.json))
-that automatically installs **Claude Code and Codex** in every Codespace, alongside the `gh` CLI
-and the Node, Python and Rust toolchains. No PC needs to stay running, and both agents run the
-same lifecycle — `AGENTS.md` and `WORKFLOW.md` are the canonical contract for each.
+that automatically installs **Claude Code and Codex** in every Codespace, alongside the `gh` command-line tool
+and the Node, Python, and Rust toolchains. No PC needs to stay running, and both agents run the
+same lifecycle—`AGENTS.md` and `WORKFLOW.md` are the canonical contract for each.
 
 ## First time
 
@@ -18,7 +18,7 @@ same lifecycle — `AGENTS.md` and `WORKFLOW.md` are the canonical contract for 
 
 5. Follow the login prompt to authenticate Claude Code (one-time, opens in the browser).
 6. On a brand-new project, run `/fl-bootstrap` first. On an existing one, just say what you want
-   in plain language — the agent detects where the project is and continues from there.
+   in plain language—the agent detects where the project is and continues from there.
 
    To use Codex instead, run `codex` in the same terminal. It reads `AGENTS.md`, `WORKFLOW.md`
    and `.codex/agents/`, which mirror the same roles.
@@ -31,7 +31,7 @@ The `fl-*` flow is GitHub-native, so `gh` needs to be authenticated:
 gh auth status
 ```
 
-A Codespace usually inherits a token with `repo` scope, which covers issues and pull requests —
+A Codespace usually inherits a token with `repo` scope, which covers issues and pull requests—
 everything except the project board. If you use a board:
 
 ```bash
@@ -44,7 +44,7 @@ works from issue state alone; only the board moves are skipped.
 ## The wiki mirror
 
 `wiki/` is mirrored to the repo's GitHub Wiki by `.github/workflows/sync-wiki.yml` on every push
-to `main` that touches it. **The wiki has to be initialized once by hand** — open the repo's
+to `main` that touches it. **The wiki has to be initialized once by hand**—open the repo's
 **Wiki** tab and create any page. Until you do, the sync workflow skips with a warning instead of
 failing, so a fresh clone is never red; nothing else in the flow depends on the mirror.
 
@@ -56,7 +56,7 @@ Don't edit pages in the GitHub Wiki UI: it's a mirror, and the next sync overwri
 - Reopen your existing Codespace from https://github.com/codespaces (faster than creating one).
 - Run `claude` and work as normal.
 - Worktrees created by `/fl-implement` live in `.worktrees/` and are gitignored.
-- Before committing template changes, run `make check` — CI runs the same gate.
+- Before committing template changes, run `make check`—CI runs the same gate.
 - Commit and push when done:
 
   ```bash

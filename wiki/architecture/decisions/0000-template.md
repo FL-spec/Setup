@@ -1,4 +1,4 @@
-# YYYY-MM-DD — [Short decision title]
+# YYYY-MM-DD—[Short decision title]
 
 - **Status:** Accepted | Superseded by [YYYY-MM-DD-<slug>]
 - **Date:** YYYY-MM-DD
@@ -7,7 +7,7 @@
 > calls go to `wiki/prd/decisions/` instead.
 >
 > Write one only for decisions that are **hard to reverse, surprising, and a real trade-off**.
-> Everyday choices don't need one. **Never delete an ADR** — supersede it.
+> Everyday choices don't need one. **Never delete an ADR**—supersede it.
 >
 > Filename: `YYYY-MM-DD-<slug>.md`, absolute dates only.
 
@@ -25,5 +25,5 @@ What becomes easier, what becomes harder, and what we're now committed to.
 
 ## Alternatives considered
 
-- **[Option B]** — why not.
-- **[Option C]** — why not.
+- **[Option B]**—why not.
+- **[Option C]**—why not.

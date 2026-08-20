@@ -37,6 +37,28 @@ jobs:
       - run: python3 -m pip install -r requirements-dev.txt
       - run: make check
 
+  # --- The prose gate. Google's style guide plus the signs-of-ai-writing rules. ---
+  # See .sdlc/policies/writing-standards.md for what it enforces and why warnings fail.
+  #
+  # The --glob must stay in step with DOC_SOURCES in the Makefile: .claude, .agents, .codex
+  # and .github are instructions written for machines, and Vale's readability rules pull
+  # against how those files need to read. Linting them is not merely noisy — the YAML
+  # frontmatter in a SKILL.md stops Vale with a parse error, so the job fails before it
+  # reports anything. tests/test_workflow_contract.py locks the two lists together.
+  docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Vale
+        uses: errata-ai/vale-action@reviewdog
+        with:
+          version: 3.17.1
+          files: all
+          fail_on_error: true
+          reporter: github-pr-check
+          vale_flags: "--minAlertLevel=warning --glob=!{.claude,.agents,.codex,.github}/**"
+
   # --- Preset: TypeScript / Node (pnpm) ---
   node:
     if: false # /fl-bootstrap flips this to `true` for the stack you use

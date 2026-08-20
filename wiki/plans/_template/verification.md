@@ -1,4 +1,4 @@
-# <NN>-<slug> — verification
+# <NN>-<slug>—verification
 
 Filled in by the **integration verifier** before promotion, and kept as the record afterwards.
 

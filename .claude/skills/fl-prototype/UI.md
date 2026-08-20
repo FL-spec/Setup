@@ -11,6 +11,11 @@ choosing between three vague mockups in their head.
 If the question is about logic or state rather than appearance — wrong branch, use
 [LOGIC.md](LOGIC.md).
 
+This branch is for **choosing between directions**, not for building one well. Once a direction
+is settled — or when there was only ever one surface to build — that work is
+[`/fl-design`](../fl-design/SKILL.md), which owns the token contract in `specs/design-tokens.md`
+and the render-and-look-at-it verification loop.
+
 ## Two sub-shapes — strongly prefer A
 
 Variants are far easier to judge **butting up against the rest of the app** — real header,
@@ -38,6 +43,12 @@ via `?variant=`, on the existing route."*
 ## 2. Generate radically different variants
 Each variant answers to the surface's purpose, the data it can reach, and the project's
 existing styling system. Give each a clear name — `VariantA`, `VariantB`, `VariantC`.
+
+Where `specs/design-tokens.md` exists, build the variants from its tokens. Variants that disagree
+about palette and type as well as structure aren't comparable, and the token contract is the one
+convention worth keeping inside a prototype worktree — see
+[`/fl-design`](../fl-design/SKILL.md). A variant that wins *because* it broke the tokens has
+answered a question nobody asked.
 
 They must be **structurally** different: different layout, different information hierarchy,
 different primary affordance. Three tweaked card grids is wallpaper, not a prototype. Two
@@ -73,7 +84,10 @@ and/or `specs/` via the same skill — the layout, the information hierarchy, an
 losing variants got wrong. Running unattended, leave it in `NOTES.md` on the branch first.
 
 Then the whole worktree goes, winner included. The real page is built later from the spec,
-through `/fl-implement`; nothing here is promoted.
+through [`/fl-design`](../fl-design/SKILL.md) for the surface itself and `/fl-implement` for the
+slice that carries it; nothing here is promoted. Any token the winning variant established goes
+into `specs/design-tokens.md` in that same `/fl-pm` pass, so the build starts from the contract
+rather than from a screenshot.
 
 ## Anti-patterns
 - **Variants differing only in colour or copy.** Real variants disagree about structure.

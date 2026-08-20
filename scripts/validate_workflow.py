@@ -33,6 +33,8 @@ REQUIRED_FILES = (
     ".sdlc/sdlc-config.yml",
     ".sdlc/policies/coding-standards.md",
     ".sdlc/policies/wiki-conventions.md",
+    ".sdlc/policies/writing-standards.md",
+    ".vale.ini",
     ".claude/settings.json",
     ".claude/hooks/git-guardrails.sh",
     ".github/workflows/ci.yml",
@@ -72,6 +74,7 @@ SKILL_NAMES = {
     "fl-diagnose",
     "fl-implement",
     "fl-pr-review",
+    "fl-design",
 }
 
 REQUIRED_CONTRACT_PHRASES = (
@@ -85,14 +88,16 @@ REQUIRED_CONTRACT_PHRASES = (
 # Commands the v1 flow used. Their reappearance means a doc was reverted.
 LEGACY_COMMANDS = ("/autopilot", "/improve-code", "`/grill`", "`/idea`")
 
+# The seven-section spec skeleton. Headings use "N · Title" rather than "N. Title"
+# because Google.HeadingPunctuation reads a trailing "N." as a heading ending in a period.
 SPEC_SECTIONS = (
-    "1. Purpose & boundary",
-    "2. External surface",
-    "3. Consumed & produced contracts",
-    "4. Invariants",
-    "5. Configuration",
-    "6. Decisions",
-    "7. Current State",
+    "1 · Purpose & boundary",
+    "2 · External surface",
+    "3 · Consumed & produced contracts",
+    "4 · Invariants",
+    "5 · Configuration",
+    "6 · Decisions",
+    "7 · Current State",
 )
 
 CODE_SPAN = re.compile(r"`[^`\n]*`")

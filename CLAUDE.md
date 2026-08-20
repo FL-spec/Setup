@@ -1,9 +1,9 @@
-# CLAUDE.md — Claude adapter & session guide
+# CLAUDE.md—Claude adapter & session guide
 
-**[AGENTS.md](AGENTS.md) and [WORKFLOW.md](WORKFLOW.md) are the canonical contract** — read them
+**[AGENTS.md](AGENTS.md) and [WORKFLOW.md](WORKFLOW.md) are the canonical contract**—read them
 before acting, together with `.sdlc/policies/coding-standards.md`, `wiki/CONTEXT.md`, the active
 specs, and the relevant decision records. This file is the Claude-side adapter: it adds the
-session navigator and the `/clear` policy, and it never contradicts the two above.
+session navigator and the `/clear` policy, and it never contradicts the two preceding files.
 
 This repo runs a spec-driven, test-driven SDLC through the `fl-*` skills. Work **matures**
 through it: a diffuse idea becomes resolved work items, then documentation, then issues, then a
@@ -26,7 +26,7 @@ run that step, and end by printing the next command and whether to `/clear`. Nev
 guessing what comes next.
 
 **You don't need to be given a command.** When the developer describes what they want in ordinary
-language, the always-on `fl-flow` router detects the step and continues from there — the `/fl-*`
+language, the always-on `fl-flow` router detects the step and continues from there—the `/fl-*`
 commands exist for when they want direct control, not as a prerequisite. Never tell someone to go
 run a command you could have run yourself.
 
@@ -48,25 +48,25 @@ Then match, **top row first**:
 
 | What you find | Where the project is | What you run / recommend |
 | --- | --- | --- |
-| placeholders in `.sdlc/sdlc-config.yml`, or empty `quality_gates` | never configured | **`/fl-bootstrap`** — nothing else works until this is done |
-| open PR with unresolved review comments | in review | **`/fl-implement <PR#>`** — the feedback loop (step 8) |
-| a worktree in `.worktrees/`, issue at In progress | mid-build | **`/fl-implement <N>`** — resume that issue |
-| merged PR whose issue is still open | just merged | **`/fl-pm`** — post-merge reconcile |
-| open issues, none in progress | ready to build | **`/fl-implement <N>`** — highest-ranked Ready issue |
-| a plan folder with work items whose Next step isn't `None` | plan maturing | **`/fl-pm`** — advance the named item |
-| bootstrapped, no plan folder in `wiki/plans/` | nothing open | **`/fl-pm`** — it opens a plan via `/fl-brainstorm` |
+| placeholders in `.sdlc/sdlc-config.yml`, or empty `quality_gates` | never configured | **`/fl-bootstrap`**—nothing else works until this is done |
+| open PR with unresolved review comments | in review | **`/fl-implement <PR#>`**—the feedback loop (step 8) |
+| a worktree in `.worktrees/`, issue at In progress | mid-build | **`/fl-implement <N>`**—resume that issue |
+| merged PR whose issue is still open | just merged | **`/fl-pm`**—post-merge reconcile |
+| open issues, none in progress | ready to build | **`/fl-implement <N>`**—highest-ranked Ready issue |
+| a plan folder with work items whose Next step isn't `None` | plan maturing | **`/fl-pm`**—advance the named item |
+| bootstrapped, no plan folder in `wiki/plans/` | nothing open | **`/fl-pm`**—it opens a plan via `/fl-brainstorm` |
 
 More than one row matching is normal on a busy repo. **Say so**, list what's in flight, and
-recommend one — the one closest to shipping, since finishing beats starting.
+recommend one—the one closest to shipping, since finishing beats starting.
 
 ## 2 · End every step with a handoff
 
 Every `fl-*` skill closes by printing four things, and you enforce it even when a skill's own
 run was cut short:
 
-1. **What changed** — files, issues, PRs, statuses.
-2. **Where that leaves the project** — in the vocabulary of the table above.
-3. **The next command, named exactly** — `/fl-implement 14`, not "you could implement something".
+1. **What changed**—files, issues, PRs, statuses.
+2. **Where that leaves the project**—in the vocabulary of the preceding table.
+3. **The next command, named exactly**—`/fl-implement 14`, not "you could implement something."
 4. **Whether to `/clear`.**
 
 **Recommend proceeding.** When the next step is unambiguous, say what you'd do and offer to do
@@ -75,12 +75,12 @@ developer's: a scope call, an outward-facing action (issues, PRs, comments), or 
 
 ## 3 · When to `/clear`
 
-- **Between skills** — a `/fl-pm` session followed by `/fl-implement` starts clean.
+- **Between skills**—a `/fl-pm` session followed by `/fl-implement` starts clean.
 - **Not mid-plan.** A brainstorm or a plan-advance session keeps its context to the end.
 - **Not per slice.** Coder and reviewer run in their own subagents; the orchestrator only ever
   holds their summaries.
 - `/clear` the orchestrator mid-batch only if its context has grown large across many issues.
-- **Never `/compact`** — it leaves context sediment.
+- **Never `/compact`**—it leaves context sediment.
 
 ---
 
@@ -94,11 +94,11 @@ developer's: a scope call, an outward-facing action (issues, PRs, comments), or 
 | `.sdlc/sdlc-config.yml` | every identifier, path template, and gate command | always current; skills read it, never hardcode |
 | `.sdlc/policies/coding-standards.md` | conventions, non-negotiables, open gaps, gotchas | always current |
 | `.sdlc/policies/wiki-conventions.md` | the shape of `wiki/` and `specs/` | always current |
-| `wiki/CONTEXT.md` | domain language — every fuzzy term pinned | always current; outlives every feature |
+| `wiki/CONTEXT.md` | domain language—every fuzzy term pinned | always current; outlives every feature |
 | `wiki/prd/` | what we're building and why (master + one per module) | living |
 | `wiki/architecture/` | system shape + dated ADRs | living; ADRs superseded, never deleted |
 | `wiki/plans/<NN>-<slug>/` | work items maturing toward buildable | retired when complete, kept as record |
-| `specs/` | exact contracts, **as-built** — implementers follow blindly | reconciled after every merge |
+| `specs/` | exact contracts, **as-built**—implementers follow blindly | reconciled after every merge |
 | GitHub issues + PRs | the build queue and its history | the state store; not a local file |
 | code + tests | the real, executable truth | always current |
 
@@ -108,7 +108,7 @@ spec's §7 Current State.
 ## 5 · Operating rules
 
 - **One model for the whole run.** Subagents inherit it.
-- **Vertical slices only** — Domain → Infrastructure → Service → API/UI, one narrow behavior,
+- **Vertical slices only**—Domain → Infrastructure → Service → API/UI, one narrow behavior,
   at or under `implement.max_changed_loc` including tests.
 - **Every slice runs in its own worktree**, with its own fresh subagent carrying only
   `wiki/CONTEXT.md`, the relevant specs and ADRs, `.sdlc/policies/coding-standards.md`, and that
@@ -117,14 +117,14 @@ spec's §7 Current State.
   once before each commit.
 - **A change to behaviour a spec describes updates that spec in the same PR.** Non-negotiable.
 - **Never merge.** The PR is where the loop stops; the developer merges.
-- **Risky work is never handed to a subagent unattended** — auth, payments, security, large
+- **Risky work is never handed to a subagent unattended**—auth, payments, security, large
   refactors, product judgment. Park it and ask.
 
 ## 6 · The roles
 
 Subagents are dispatched as **canonical, vendor-neutral roles** defined in `.agents/roles/`;
 `.claude/agents/` are thin adapters onto them, and `.codex/agents/` mirror them for Codex. Keep
-the main conversation on product decisions, orchestration and results — **return summaries from
+the main conversation on product decisions, orchestration and results—**return summaries from
 subagents, never raw logs.**
 
 | Role | Owns | Dispatched by |
@@ -140,12 +140,13 @@ subagents, never raw logs.**
 
 | Skill | Does |
 | --- | --- |
-| `fl-flow` | always-on router — detects the step from plain language (no slash command) |
+| `fl-flow` | always-on router—detects the step from plain language (no slash command) |
 | `/fl-bootstrap` | one-time setup: config, gates, CI, labels, board, seeded docs |
-| `/fl-pm` | owns the backlog and the docs — plan · synthesize · issues · reconcile |
+| `/fl-pm` | owns the backlog and the docs—plan · synthesize · issues · reconcile |
 | `/fl-brainstorm` | relentless one-question interview → resolved work items (writes nothing) |
 | `/fl-research` | one question, primary sources, every claim cited (writes nothing) |
 | `/fl-prototype` | throwaway code in its own worktree that answers a design question |
+| `/fl-design` | build a UI deliberately, bind it to `specs/design-tokens.md`, then render it and look |
 | `/fl-diagnose` | finds and proves the mechanism behind a defect (never fixes) |
 | `/fl-implement` | issue → worktree → coder → reviewer → PR → PR-feedback loop |
 | `/fl-pr-review` | two-axis (Standards + Spec) review published as a real GitHub PR review |
@@ -165,5 +166,16 @@ It runs the workflow validator (canonical roles match both vendor adapters, ever
 invocable, every Markdown link resolves, wiki links stay inside `wiki/`, the config still matches
 `schemas/sdlc-config.schema.json`), a secret scan, and the contract tests. CI runs it on every PR.
 **If you change the roles, the skills, or the config's shape, run it before you commit.**
+
+Prose has its own gate, because it fails for different reasons:
+
+```bash
+make docs-sync   # once per checkout
+make docs        # Google style + signs-of-ai-writing, warnings fail
+```
+
+It covers `wiki/`, `specs/`, and the root documents. Skill and role files stay outside it: they
+are written for machines. The standard, and why two Google rules are turned off, is in
+`.sdlc/policies/writing-standards.md`.
 
 New to the flow? **[HOW_WE_BUILD.md](HOW_WE_BUILD.md)** has the ready-to-copy prompts.

@@ -1,21 +1,21 @@
-# CONTEXT.md — Domain Language
+# CONTEXT.md—Domain Language
 
 The shared vocabulary for this project. **Every fuzzy term gets pinned here the moment it comes
 up**, so agents and humans mean the same thing.
 
-This file is loaded into every coder and reviewer subagent and it **outlives every feature** —
+This file is loaded into every coder and reviewer subagent and it **outlives every feature**—
 it is part of the long-term source of truth, alongside code, tests, `specs/`, and the decision
-records. A term that only got pinned in conversation is a term the next subagent will get wrong.
+records. A term that only got pinned in conversation is a term the next subagent gets wrong.
 
 ## Glossary
 
-> One row per term. Pin the meaning, and **call out collisions explicitly** — the third column
+> One row per term. Pin the meaning, and **call out collisions explicitly**—the third column
 > is the one that earns its keep.
 
 | Term | Means | Not to be confused with |
 | ---- | ----- | ----------------------- |
 | _(term)_ | _(precise definition)_ | _(the thing it's often confused with)_ |
-| _e.g._ **Account** | the billing entity (a `Customer`) | a login (a `User`) |
+| For example, **Account** | the billing entity (a `Customer`) | a login (a `User`) |
 
 ## Domain rules
 
@@ -26,7 +26,7 @@ records. A term that only got pinned in conversation is a term the next subagent
 
 ## Boundaries
 
-> What lives where — the major modules and what each one owns. The exact contracts are in
+> What lives where—the major modules and what each one owns. The exact contracts are in
 > `specs/`; this is the one-line orientation.
 
 - _(none yet)_

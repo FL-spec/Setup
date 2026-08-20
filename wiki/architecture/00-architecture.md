@@ -9,18 +9,18 @@ _[The shape of the system in a paragraph, and a diagram if it earns its place.]_
 
 ## Module boundaries
 
-> One row per module. The exact contracts are in `specs/` — link, never restate.
+> One row per module. The exact contracts are in `specs/`—link, never restate.
 
 | Module | Owns | Spec |
 | --- | --- | --- |
 | _(module)_ | _(responsibility)_ | `specs/<module>.md` |
 
 Contracts held between two or more modules live in `specs/00-contracts.md` (top-level, outside
-`wiki/` — see the link rule in `.sdlc/policies/wiki-conventions.md`).
+`wiki/`—see the link rule in `.sdlc/policies/wiki-conventions.md`).
 
 ## Cross-cutting concerns
 
-_[Logging, config, auth, error handling, observability — whatever actually spans modules.]_
+_[Logging, config, auth, error handling, observability—whatever actually spans modules.]_
 
 ## Decisions
 

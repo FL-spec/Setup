@@ -1,7 +1,7 @@
 # Wiki conventions
 
 The concrete shape of `wiki/` and `specs/`, referenced by `fl-pm` rather than hardcoded into
-its workflow files — this is the single source of truth for the structure itself.
+its workflow files—this is the single source of truth for the structure itself.
 
 ## Layout
 
@@ -26,7 +26,7 @@ specs/                        (top-level, not under wiki/) — exact technical c
 
 ## Module skeleton
 
-One child PRD and one spec file per module listed in `.sdlc/sdlc-config.yml`'s `modules:` —
+One child PRD and one spec file per module listed in `.sdlc/sdlc-config.yml`'s `modules:`—
 matching the repo's actual top-level directories. A **new top-level module** gets a new child
 PRD and a new spec; a sub-capability *within* an existing module does not.
 
@@ -60,11 +60,11 @@ every coder and reviewer subagent and it outlives any single feature.
 
 ## Technical contracts stay in `specs/`
 
-`specs/` is the exact-contract layer — schemas, interfaces, file formats — that implementers
+`specs/` is the exact-contract layer—schemas, interfaces, file formats—that implementers
 follow **blindly**. One file per module, plus the one cross-module file below, each keeping a
 `Current State` section reconciled after every merge (see `fl-pm/reconcile.md`).
 
-**`specs/00-contracts.md`** owns every contract that is bilateral or wider — held between two
+**`specs/00-contracts.md`** owns every contract that is bilateral or wider—held between two
 or more modules, where filing it under one module's spec would wrongly imply that module owns
 it: shared message envelopes, event vocabularies, cross-module key grammars, lifecycle state
 machines, shared definitions. A module spec cites `00-contracts.md` by section id (`§C3`, `§C4`);
@@ -73,27 +73,34 @@ it never restates its content.
 Every spec follows one skeleton:
 
 ```
-1. Purpose & boundary      — what the module owns; explicitly what it must not do
-2. External surface        — the exact contract, module-shaped
-3. Consumed & produced contracts — pointers into specs/00-contracts.md, not restatements
-4. Invariants              — numbered and module-prefixed (WEB-INV-1, API-INV-1, CTR-INV-1),
+1 · Purpose & boundary      — what the module owns; explicitly what it must not do
+2 · External surface        — the exact contract, module-shaped
+3 · Consumed & produced contracts — pointers into specs/00-contracts.md, not restatements
+4 · Invariants              — numbered and module-prefixed (WEB-INV-1, API-INV-1, CTR-INV-1),
                              each individually testable
-5. Configuration           — env vars, ports, defaults
-6. Decisions               — links to the ADRs that bear on the module
-7. Current State           — every divergence, defect and surprise
+5 · Configuration           — env vars, ports, defaults
+6 · Decisions               — links to the ADRs that bear on the module
+7 · Current State           — every divergence, defect and surprise
 ```
 
-Specs describe the system **as-built, never as-intended** — where code and design intent
+Specs describe the system **as-built, never as-intended**—where code and design intent
 differ, the code wins and the divergence goes in §7 with an ADR recording it. The body says
-what the contract *is*, with short inline pointers (`(unreachable — see §7)`) rather than
+what the contract *is*, with short inline pointers (`(unreachable—see §7)`) rather than
 caveats scattered through it.
+
+## Diagrams are Mermaid
+
+Fence diagrams with ```` ```mermaid ````. Mermaid renders natively in GitHub, in the mirrored
+wiki, and in artifacts with no build step, so the diagram is visible everywhere the documentation
+is read. Full guidance, and the reason this repository standardises on one tool, is in
+`.sdlc/policies/writing-standards.md`.
 
 ## Links
 
-Relative Markdown links, **with** the `.md` extension — `[the FDR](../decisions/2026-08-17-slug.md)`.
+Relative Markdown links, **with** the `.md` extension—`[the FDR](../decisions/2026-08-17-slug.md)`.
 Never root-absolute (`/prd/...` leaves GitHub entirely) and never extensionless. This follows
 from `wiki_sync` in `.sdlc/sdlc-config.yml`: `.github/scripts/flatten_wiki.py` rewrites these
-for the mirrored GitHub Wiki (which has no directories in its URL space) — your job is only to
+for the mirrored GitHub Wiki (which has no directories in its URL space)—your job is only to
 make them resolve on disk in `wiki/`.
 
 **Never link out of `wiki/` with a relative path.** `flatten_wiki.py` only rewrites links that
