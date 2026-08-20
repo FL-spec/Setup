@@ -222,6 +222,13 @@ class ProseGateContractTests(unittest.TestCase):
         self.assertIn(level, self.ci)
         self.assertIn(level, self.policy)
 
+    def test_ci_gates_on_the_makefile_target_rather_than_on_reviewdog(self) -> None:
+        """reviewdog gates at `-fail-level=error` and cannot be told to fail on a
+        warning, so a job that ends at the annotation step reports warnings and still
+        goes green. `make docs` has to be the step that decides."""
+        self.assertIn("run: make docs", self.ci)
+        self.assertIn("fail_on_error: false", self.ci)
+
     def test_ci_and_the_makefile_gate_the_same_files(self) -> None:
         """CI linting a directory `make docs` skips is how a branch goes green locally
         and red on GitHub — and .claude/ does not merely add noise, its frontmatter
