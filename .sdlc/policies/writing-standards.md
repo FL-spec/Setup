@@ -63,8 +63,8 @@ place their most useful checks at warning and suggestion, and an error-only gate
 what the rule set exists to catch.
 
 ```bash
-make docs-sync   # once, to download the rule packages
-make docs        # the gate
+make docs        # the gate; downloads the rule packages on first run
+make docs-sync   # re-download them
 ```
 
 Suggestions are advisory. Read them, act on the ones that improve the sentence, and ignore the

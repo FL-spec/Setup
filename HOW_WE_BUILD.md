@@ -191,9 +191,9 @@ each document as exactly one of Diátaxis's four kinds. Diagrams are Mermaid, wh
 GitHub, the wiki, and artifacts with no build step.
 
 ```bash
-make docs-sync        # once per checkout: download the rule packages
 make docs             # the gate: Google style + signs-of-ai-writing, warnings fail
 make docs-suggestions # advisory: everything the gate let through
+make docs-sync        # re-download the rule packages
 ```
 
 The `signs-of-ai-writing` rules come from Wikipedia's *Signs of AI Writing* and catch hedging

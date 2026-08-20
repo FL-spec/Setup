@@ -170,8 +170,8 @@ invocable, every Markdown link resolves, wiki links stay inside `wiki/`, the con
 Prose has its own gate, because it fails for different reasons:
 
 ```bash
-make docs-sync   # once per checkout
 make docs        # Google style + signs-of-ai-writing, warnings fail
+make docs-sync   # re-download the rule packages
 ```
 
 It covers `wiki/`, `specs/`, and the root documents. Skill and role files stay outside it: they

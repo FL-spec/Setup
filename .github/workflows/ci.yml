@@ -71,8 +71,8 @@ jobs:
       # so `make docs` below would otherwise die with "vale: No such file or directory".
       - name: Put Vale on PATH
         run: echo "/opt/hostedtoolcache/vale/${VALE_VERSION}/x64" >> "$GITHUB_PATH"
-      - name: Download the rule packages
-        run: make docs-sync
+      # `make docs` downloads the rule packages itself on a cold checkout, so this
+      # step is the whole gate and is exactly what a developer runs locally.
       - name: The gate
         run: make docs
 

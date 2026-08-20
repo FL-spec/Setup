@@ -246,6 +246,52 @@ class ProseGateContractTests(unittest.TestCase):
             with self.subTest(directory=directory):
                 self.assertIn(directory, self.policy)
 
+    def test_the_gate_downloads_its_own_rule_packages(self) -> None:
+        """`make docs` on a fresh clone has to work. Without the package cache as a
+        prerequisite it dies with "style 'Google' does not exist on StylesPath", which
+        a first-time reader hits before the README has told them about `make docs-sync`.
+
+        The cache path is asserted against .vale.ini rather than hardcoded, so renaming
+        StylesPath or dropping a package from Packages fails here instead of failing on
+        somebody's first clone.
+        """
+        import re
+
+        declared = re.search(
+            r"^VALE_PACKAGE_CACHE\s*=\s*(\S+)", self.makefile, re.MULTILINE
+        )
+        self.assertIsNotNone(declared, "Makefile declares no VALE_PACKAGE_CACHE")
+        cache = declared.group(1)
+
+        styles = self.config["vale"]["stylespath"].rstrip("/")
+        packages = {
+            item.strip().rsplit("/", 1)[-1].removesuffix(".zip")
+            for item in self.config["vale"]["packages"].split(",")
+        }
+        self.assertTrue(cache.startswith(f"{styles}/"), f"{cache} is not under {styles}")
+        self.assertIn(cache[len(styles) + 1 :], packages)
+
+        for target in ("docs", "docs-suggestions"):
+            with self.subTest(target=target):
+                self.assertRegex(
+                    self.makefile,
+                    rf"(?m)^{target}: \| \$\(VALE_PACKAGE_CACHE\)$",
+                )
+
+    def test_every_stack_preset_ignores_what_it_builds(self) -> None:
+        """ci.yml ships a preset per stack. A preset whose artifacts aren't ignored
+        leaves `git status` dirty the first time somebody runs the gates it turns on."""
+        gitignore = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8")
+        for command, artifact in (
+            ("pnpm install", "node_modules/"),
+            ("uv sync", ".venv/"),
+            ("cargo build", "target/"),
+        ):
+            if command not in self.ci:
+                continue
+            with self.subTest(preset=command):
+                self.assertIn(artifact, gitignore)
+
 
 if __name__ == "__main__":
     unittest.main()
