@@ -1,79 +1,146 @@
 # How We Build
 
 ```
-/idea  →  /grill  →  /autopilot
+/fl-bootstrap → /fl-pm ⇄ (brainstorm · research · prototype · diagnose) → /fl-pm → /fl-implement → /fl-pm
 ```
 
-You drive the first two. Agents drive the third. `/clear` between each.
+You drive the thinking. Agents drive the building. `/clear` between skills.
+
+The one idea underneath all of it: **a work item advances by one concrete next step at a time,
+and never skips a step it hasn't earned.** A thing that needs a fact gets research, not an
+opinion. A thing that needs a decision gets you, not a prototype. Documentation only gets
+written once the findings have stopped moving, and issues only get cut once you've read the
+documentation.
 
 ---
 
-## 1 · `/idea` — jot it down *(optional)*
-
-For when the idea is still fuzzy. No design, no code.
+## 0 · `/fl-bootstrap` — once per project
 
 ```
-/idea
+/fl-bootstrap
+```
+
+Interviews you on stack and modules, writes the config and the coding standards, wires the
+quality gates and CI, creates the labels and board, and seeds `wiki/` + `specs/`. Nothing else
+runs until this is done.
+
+→ a configured repo. Next: `/fl-pm`.
+
+---
+
+## 1 · `/fl-pm` — open a plan
+
+```
+/fl-pm
 
 I want to build [thing] for [who] so they can [outcome].
 ```
 
-→ writes `idea.md`. Next: `/grill`.
+`/fl-pm` owns the backlog and the docs. With nothing open, it runs `/fl-brainstorm` for you.
+
+→ `wiki/plans/<NN>-<slug>/0-plan_map.md`. Next: advance an item.
 
 ---
 
-## 2 · `/grill` — design it
+## 2 · The maturity skills — advance one work item
 
-An interview, one question at a time. You answer **Yes / No / Almost**.
+`/fl-pm` picks the next step and dispatches. You rarely call these directly.
 
-```
-/grill
+| Next step | Skill | For |
+| --- | --- | --- |
+| brainstorm | `/fl-brainstorm` | the item is still diffuse |
+| research | `/fl-research` | an external fact decides it |
+| prototype | `/fl-prototype` | it can't be settled on paper |
+| diagnose | `/fl-diagnose` | something is wrong and the cause is unknown |
+| decide | you | two named options, nothing left to learn |
 
-I want to add [feature] so that [user] can [outcome].
-Interview me one question at a time. Recommend an answer for each.
-```
+**In a brainstorm you answer Yes / No / Almost:**
 
 | You say | Means |
-| ------- | ----- |
+| --- | --- |
 | **Yes** | locked, move on |
-| **No** | wrong — adjust |
-| **Almost** | close — refine |
+| **No** | wrong — discard and adjust |
+| **Almost** | close — refine until it's a Yes |
 
-→ writes `prd.md`. Next: `/autopilot`.
+→ findings. Take them back: `/fl-pm`, "here's what came back from the research."
 
 ---
 
-## 3 · `/autopilot` — build it
+## 3 · `/fl-pm` — write it down, then cut it up
 
-Hands-off. Slices the spec, builds each slice in its own subagent (tests first),
-reviews, refactors. Stops only for risky slices (auth, payments, security).
-
-```
-/autopilot
-
-Build everything in prd.md.
-```
-
-→ ships tested code. Next feature: `/idea` or `/grill`.
-
-**If it parks a slice**, handle it, then:
+Two separate steps, deliberately:
 
 ```
-Resume autopilot. I handled the parked slice: [what you did].
+/fl-pm
+
+Synthesize this plan.
 ```
+→ PRDs, specs, ADRs/FDRs in `wiki/` and `specs/`. **Then it stops.** You read them.
+
+```
+Looks right. Cut the issues.
+```
+→ vertical-slice GitHub issues, sized under 300 LOC, dependency-linked, labelled, on the board.
+
+---
+
+## 4 · `/fl-implement <N>` — build it
+
+```
+/fl-implement 14
+```
+
+Feasibility gate → worktree → coder subagent (tests first) → reviewer subagent (max 3 rounds) →
+issue checklist ticked → **PR opened, never merged**.
+
+Several at once, one branch, one PR:
+```
+/fl-implement 14 to 18
+```
+
+When the PR draws review comments:
+```
+/fl-implement 231        # the PR number — runs the feedback loop
+```
+Every thread ends fixed-and-replied or declined-and-replied, and resolved.
+
+Want a deeper review of your own first?
+```
+/fl-pr-review main
+```
+→ a real GitHub review, inline comments and suggestions, `COMMENT` or `REQUEST_CHANGES`.
+
+---
+
+## 5 · `/fl-pm` — after you merge
+
+```
+/fl-pm
+
+Post-merge for #14.
+```
+→ `specs/` §7 Current State reconciled, issue closed, worktree removed, board moved, dependents
+unblocked, and the ready queue reported back.
 
 ---
 
 ## Cheat sheet
 
 | Want to… | Run |
-| -------- | --- |
-| Capture an idea | `/idea` |
-| Design a feature | `/grill` |
-| Build it | `/autopilot` |
-| Resume a build | `/autopilot` |
+| --- | --- |
+| Set up a new repo | `/fl-bootstrap` |
+| Open a plan / know what's next | `/fl-pm` |
+| Shape a fuzzy idea | `/fl-brainstorm` |
+| Settle an external fact | `/fl-research` |
+| Try a design out | `/fl-prototype` |
+| Find out why something's broken | `/fl-diagnose` |
+| Write the docs / cut the issues | `/fl-pm` |
+| Build an issue | `/fl-implement <N>` |
+| Review a branch | `/fl-pr-review <base>` |
+| Handle PR comments | `/fl-implement <PR#>` |
+| Reconcile after a merge | `/fl-pm` |
 
-**Rules:** `/clear` between phases · never `/compact` · vertical slices only ·
-tests never weakened · CI green before `/autopilot`.
+**Rules:** `/clear` between skills · never `/compact` · vertical slices only · tests never
+weakened · specs updated in the same PR · never auto-merge.
 
-> Lost? Claude reads `CLAUDE.md` every session and tells you where you are.
+> Lost? Claude reads `CLAUDE.md` every session, works out where the project is, and tells you.

@@ -1,6 +1,12 @@
-# CI — the feedback loop /autopilot relies on. Keep it green.
-# This is a Node/pnpm starter. Swap the steps for your stack and keep the gates:
-# typecheck · lint · test · build. Commands should match AGENTS.md.
+# CI — the feedback loop the fl-* skills rely on. Keep it green.
+#
+# The jobs below MUST run exactly the commands in `quality_gates` in .sdlc/sdlc-config.yml.
+# A CI that checks something different from what the reviewer subagent runs is how a branch
+# goes green locally and red on GitHub.
+#
+# /fl-bootstrap keeps the preset job for your stack, substitutes the real module paths, and
+# deletes the rest. Do the same by hand if you're setting this up yourself.
+
 name: CI
 
 on:
@@ -9,31 +15,48 @@ on:
   pull_request:
 
 jobs:
-  verify:
+  # --- Preset: TypeScript / Node (pnpm) ---
+  node:
+    if: false # /fl-bootstrap flips this to `true` for the stack you use
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
+        with: { version: 9 }
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm test
+      - run: pnpm build
 
-      - name: Install
-        run: pnpm install --frozen-lockfile
+  # --- Preset: Python (uv + ruff + pytest) ---
+  python:
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --all-extras
+      - run: uv run ruff check src
+      - run: uv run ruff format --check src
+      - run: uv run mypy src
+      - run: uv run pytest
 
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Test
-        run: pnpm test
-
-      - name: Build
-        run: pnpm build
+  # --- Preset: Rust (cargo) ---
+  rust:
+    if: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+      - run: cargo test
+      - run: cargo build --release

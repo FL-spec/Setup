@@ -1,88 +1,126 @@
-# CLAUDE.md — Workflow Guide
+# CLAUDE.md — Session Guide
 
-This repo follows a spec-driven, test-driven build flow:
+This repo runs a spec-driven, test-driven SDLC through the `fl-*` skills. Work **matures**
+through it: a diffuse idea becomes resolved work items, then documentation, then issues, then a
+reviewed PR.
 
 ```
-/idea (optional)  →  /grill  →  /autopilot
+/fl-bootstrap  (once)
+      ↓
+/fl-pm  ⇄  /fl-brainstorm · /fl-research · /fl-prototype · /fl-diagnose
+      ↓        (a work item advances by one next step at a time)
+/fl-pm  →  docs in wiki/ + specs/  →  GitHub issues
+      ↓
+/fl-implement <N>  →  worktree → coder → reviewer → PR → feedback loop
+      ↓
+/fl-pm  post-merge  →  specs reconciled, dependents unblocked
 ```
 
-`/idea` and `/grill` are human-in-the-loop — that's where the design thinking
-happens. Once `prd.md` exists, the rest is `/autopilot`: it slices the PRD,
-dispatches one subagent per slice, reviews each, and refactors before it finishes.
-
-**At the start of every session:** detect the current step from the files
-present, tell the developer where they are, run that step, and at the end print
-the next command and whether to `/clear`.
+**At the start of every session:** detect where the project actually is, tell the developer,
+run that step, and end by printing the next command and whether to `/clear`. Never leave them
+guessing what comes next.
 
 ---
 
-## Detect the current step
+## 1 · Detect the current step
 
-| Files present                        | You are here → run                    |
-| ------------------------------------ | ------------------------------------- |
-| no `idea.md`, no `prd.md`            | fresh start → suggest `/idea` (optional), else `/grill` |
-| `idea.md`, no `prd.md`              | design captured → `/grill`            |
-| `prd.md`, no `progress.txt`         | design locked → `/autopilot`          |
-| `progress.txt` with open slices     | mid-build → `/autopilot` (continue)   |
-| feature archived (`prd.md` gone)    | shipped → next feature: `/idea` or `/grill` |
+Run these first. They're cheap and they beat asking:
 
-## End every step with the handoff
+```bash
+grep -c '<[A-Z_]*>' .sdlc/sdlc-config.yml      # placeholders left = not bootstrapped
+ls wiki/plans/ 2>/dev/null                      # open plans
+gh issue list --state open --limit 20           # the backlog
+gh pr list --state open                         # anything in review
+git worktree list                               # anything mid-build
+```
 
-- after `/idea` → "Idea doc ready. Next: `/grill`. Recommend `/clear` first."
-- after `/grill` → "PRD ready. Next: `/autopilot`. Recommend `/clear` first."
-- during `/autopilot` → each slice runs in its own subagent and returns a summary; take the next slice.
-- after `/autopilot` → "Feature shipped (built + refactored). Archive PRD + issues. Next feature: `/idea` or `/grill`."
+Then match, **top row first**:
 
-## When to /clear
+| What you find | Where the project is | What you run / recommend |
+| --- | --- | --- |
+| placeholders in `.sdlc/sdlc-config.yml`, or empty `quality_gates` | never configured | **`/fl-bootstrap`** — nothing else works until this is done |
+| open PR with unresolved review comments | in review | **`/fl-implement <PR#>`** — the feedback loop (step 8) |
+| a worktree in `.worktrees/`, issue at In progress | mid-build | **`/fl-implement <N>`** — resume that issue |
+| merged PR whose issue is still open | just merged | **`/fl-pm`** — post-merge reconcile |
+| open issues, none in progress | ready to build | **`/fl-implement <N>`** — highest-ranked Ready issue |
+| a plan folder with work items whose Next step isn't `None` | plan maturing | **`/fl-pm`** — advance the named item |
+| bootstrapped, no plan folder in `wiki/plans/` | nothing open | **`/fl-pm`** — it opens a plan via `/fl-brainstorm` |
 
-- **Between phases** (after `/idea`, after `/grill`): `/clear`.
-- Slices run in their own subagent, so **no per-slice clear** is needed.
-- `/clear` the orchestrator only if its context grows large across many slices.
-- Within a single grilling: **do NOT clear**.
+More than one row matching is normal on a busy repo. **Say so**, list what's in flight, and
+recommend one — the one closest to shipping, since finishing beats starting.
+
+## 2 · End every step with a handoff
+
+Every `fl-*` skill closes by printing four things, and you enforce it even when a skill's own
+run was cut short:
+
+1. **What changed** — files, issues, PRs, statuses.
+2. **Where that leaves the project** — in the vocabulary of the table above.
+3. **The next command, named exactly** — `/fl-implement 14`, not "you could implement something".
+4. **Whether to `/clear`.**
+
+**Recommend proceeding.** When the next step is unambiguous, say what you'd do and offer to do
+it now rather than waiting to be asked. Stop and ask only where a decision is genuinely the
+developer's: a scope call, an outward-facing action (issues, PRs, comments), or a blocker.
+
+## 3 · When to `/clear`
+
+- **Between skills** — a `/fl-pm` session followed by `/fl-implement` starts clean.
+- **Not mid-plan.** A brainstorm or a plan-advance session keeps its context to the end.
+- **Not per slice.** Coder and reviewer run in their own subagents; the orchestrator only ever
+  holds their summaries.
+- `/clear` the orchestrator mid-batch only if its context has grown large across many issues.
 - **Never `/compact`** — it leaves context sediment.
 
 ---
 
-## Source of truth
+## 4 · Source of truth
 
-| File             | Holds                                              | Lifecycle                |
-| ---------------- | -------------------------------------------------- | ------------------------ |
-| `CONTEXT.md`     | Domain language — every fuzzy term pinned          | Always current           |
-| `prd.md`         | The destination for the current feature            | Archived after ship      |
-| `docs/adr/`      | Decisions that are hard to reverse                 | Superseded, never deleted |
-| `progress.txt`   | Build log — what each slice did                     | Per feature              |
-| `AGENTS.md`      | Repo conventions, commands, gotchas                 | Always current           |
-| code + tests     | The real, executable truth                          | Always current           |
+| File | Holds | Lifecycle |
+| --- | --- | --- |
+| `.sdlc/sdlc-config.yml` | every identifier, path template, and gate command | always current; skills read it, never hardcode |
+| `.sdlc/policies/coding-standards.md` | conventions, non-negotiables, open gaps, gotchas | always current |
+| `.sdlc/policies/wiki-conventions.md` | the shape of `wiki/` and `specs/` | always current |
+| `wiki/CONTEXT.md` | domain language — every fuzzy term pinned | always current; outlives every feature |
+| `wiki/prd/` | what we're building and why (master + one per module) | living |
+| `wiki/architecture/` | system shape + dated ADRs | living; ADRs superseded, never deleted |
+| `wiki/plans/<NN>-<slug>/` | work items maturing toward buildable | retired when complete, kept as record |
+| `specs/` | exact contracts, **as-built** — implementers follow blindly | reconciled after every merge |
+| GitHub issues + PRs | the build queue and its history | the state store; not a local file |
+| code + tests | the real, executable truth | always current |
 
-After a feature ships, the source of truth is **code + tests + `CONTEXT.md` + ADRs**.
+Where a document and the code disagree, **the code wins** and the divergence is recorded in the
+spec's §7 Current State.
 
----
-
-## Operating rules
+## 5 · Operating rules
 
 - **One model for the whole run.** Subagents inherit it.
-- **One subagent per slice**, each in its own fresh context with only `CONTEXT.md`,
-  the relevant ADRs, `AGENTS.md`, and that single slice.
-- **Vertical slices only** (schema → API → UI → tests), dependency-ordered.
-- **Never weaken a test to make it pass.** Affected tests run in-loop; the full
-  suite + typecheck + lint + build run once before each commit.
-- **HITL slices** (auth, payments, security, large refactors, product judgment)
-  are never handed to a subagent — park them and ping the developer.
-- **Guardrails first.** Do not run `/autopilot` until CI is green and the git/secret
-  guardrails are in place (see `.claude/settings.json`).
+- **Vertical slices only** — Domain → Infrastructure → Service → API/UI, one narrow behavior,
+  at or under `implement.max_changed_loc` including tests.
+- **Every slice runs in its own worktree**, with its own fresh subagent carrying only
+  `wiki/CONTEXT.md`, the relevant specs and ADRs, `.sdlc/policies/coding-standards.md`, and that
+  one issue.
+- **Never weaken a test to make it pass.** Affected tests run in-loop; the full gate block runs
+  once before each commit.
+- **A change to behaviour a spec describes updates that spec in the same PR.** Non-negotiable.
+- **Never merge.** The PR is where the loop stops; the developer merges.
+- **Risky work is never handed to a subagent unattended** — auth, payments, security, large
+  refactors, product judgment. Park it and ask.
 
----
+## 6 · The skills
 
-## The skills & agents in this repo
+| Skill | Does |
+| --- | --- |
+| `/fl-bootstrap` | one-time setup: config, gates, CI, labels, board, seeded docs |
+| `/fl-pm` | owns the backlog and the docs — plan · synthesize · issues · reconcile |
+| `/fl-brainstorm` | relentless one-question interview → resolved work items (writes nothing) |
+| `/fl-research` | one question, primary sources, every claim cited (writes nothing) |
+| `/fl-prototype` | throwaway code in its own worktree that answers a design question |
+| `/fl-diagnose` | finds and proves the mechanism behind a defect (never fixes) |
+| `/fl-implement` | issue → worktree → coder → reviewer → PR → PR-feedback loop |
+| `/fl-pr-review` | two-axis (Standards + Spec) review published as a real GitHub PR review |
 
-Skills (`.claude/skills/<name>/SKILL.md`):
-- **idea** — captures intent into `idea.md`.
-- **grill** — runs the design interview, then synthesizes `prd.md`.
-- **autopilot** — orchestrates slice → subagent-per-slice → review → improve-code.
-- **improve-code** — end-of-build refactor and archival.
+`/fl-pm` is the hub: it holds the plan, and every other skill either feeds it findings or
+consumes what it produced. **When in doubt, start there.**
 
-Agents (`.claude/agents/<name>.md`):
-- **slice-implementer** — implements one slice via TDD, commits if green. Returns a summary only.
-- **reviewer** — read-only. Reviews one slice against the issue, acceptance criteria, `CONTEXT.md`, and ADRs.
-
-New to the flow? Read **HOW_WE_BUILD.md** — it has the ready-to-copy prompts.
+New to the flow? **[HOW_WE_BUILD.md](HOW_WE_BUILD.md)** has the ready-to-copy prompts.

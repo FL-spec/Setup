@@ -1,49 +1,40 @@
 # AGENTS.md
 
-Repo conventions every agent (and human) follows. Keep this current — it's loaded
-into every slice subagent. Fill in the bracketed parts when you set up a project.
+Conventions every agent — and every human — follows in this repo.
+
+**This file is a pointer, not the source.** It exists so tools that read `AGENTS.md` by
+convention (Codex, Cursor, Copilot, and anything else that doesn't read `CLAUDE.md`) land on the
+right material instead of guessing.
+
+## Read these, in this order
+
+1. **[CLAUDE.md](CLAUDE.md)** — how work flows through this repo, how to detect what step the
+   project is on, and what to run next.
+2. **[.sdlc/policies/coding-standards.md](.sdlc/policies/coding-standards.md)** — the stack,
+   the per-module conventions, the non-negotiables, the testing rules, the known gaps, and the
+   gotchas. **This is the source of truth for how code gets written here.**
+3. **[.sdlc/sdlc-config.yml](.sdlc/sdlc-config.yml)** — every identifier, path template, and
+   quality-gate command. Read values from here; never hardcode them.
+4. **[wiki/CONTEXT.md](wiki/CONTEXT.md)** — the domain glossary. Use these words exactly.
+5. **[specs/](specs/)** — the exact technical contracts, one file per module plus
+   `specs/00-contracts.md` for anything crossing a module boundary. **Follow them blindly**;
+   where a spec and the code disagree, the code wins and the divergence belongs in the spec's
+   §7 Current State.
+
+## The short version
+
+- **Vertical slices only.** One narrow behavior, Domain → Infrastructure → Service → API/UI, at
+  or under `implement.max_changed_loc` including tests.
+- **TDD**: RED → GREEN → REFACTOR, one behavior at a time, through the public interface.
+- **Never weaken, skip, or delete a test to make it pass.**
+- **Every quality gate green before a commit**, per module touched.
+- **A change to behaviour a spec describes updates that spec in the same PR.**
+- **No secrets in code.** Env vars or gitignored config only.
+- **Ask before adding a dependency.**
+- **Never merge.** The PR is where automation stops.
 
 ## Commands
 
-> Replace with the real commands for this project's stack once chosen.
-
-- Install: `[pnpm install]`
-- Dev: `[pnpm dev]`
-- Test (all): `[pnpm test]`
-- Test one file: `[pnpm vitest run <path>]`
-- Typecheck: `[pnpm typecheck]`
-- Lint: `[pnpm lint]`
-- Build: `[pnpm build]`
-- E2E: `[pnpm playwright test]`
-
-## Conventions
-
-- [Domain naming — use the terms pinned in `CONTEXT.md`, nothing fuzzier.]
-- [Folder structure / module boundaries.]
-- [Patterns to follow; patterns to avoid.]
-- Favor **deep modules**: simple interface, meaningful work behind it.
-
-## PR / commit rules
-
-- **One vertical slice per PR.** No unrelated changes.
-- Tests + typecheck + lint + build must pass before commit.
-- Conventional, descriptive commit messages.
-- Never weaken or skip a test to make it green.
-
-## Security
-
-- **Never commit secrets.** Use env vars; validate them at startup.
-- **Ask before adding a dependency.**
-- Treat all external input as untrusted.
-
-## Testing
-
-- TDD: RED → GREEN → REFACTOR.
-- Affected test file runs in-loop; full suite once before commit.
-- E2E covers the critical path only.
-
-## Gotchas
-
-> Appended automatically during builds. Real, surprising things that bit us.
-
-- _(none yet)_
+Every runnable command lives under `quality_gates` in
+[.sdlc/sdlc-config.yml](.sdlc/sdlc-config.yml), per module. Take them **verbatim from that file**
+rather than from memory — it is what CI runs and what the reviewer checks.
