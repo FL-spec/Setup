@@ -226,7 +226,10 @@ class ProseGateContractTests(unittest.TestCase):
         """reviewdog gates at `-fail-level=error` and cannot be told to fail on a
         warning, so a job that ends at the annotation step reports warnings and still
         goes green. `make docs` has to be the step that decides."""
-        self.assertIn("run: make docs", self.ci)
+        import re
+
+        gate = re.search(r"^\s*run: make docs\s*$", self.ci, re.MULTILINE)
+        self.assertIsNotNone(gate, "no `run: make docs` step — `make docs-sync` is not the gate")
         self.assertIn("fail_on_error: false", self.ci)
 
     def test_ci_and_the_makefile_gate_the_same_files(self) -> None:

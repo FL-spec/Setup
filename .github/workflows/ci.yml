@@ -54,16 +54,25 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      # One version string: the action installs it, the gate step runs it.
+      VALE_VERSION: 3.17.1
     steps:
       - uses: actions/checkout@v4
       - name: Annotate the diff (advisory)
         uses: errata-ai/vale-action@reviewdog
         with:
-          version: 3.17.1
+          version: ${{ env.VALE_VERSION }}
           files: all
           fail_on_error: false
           reporter: github-pr-check
           vale_flags: "--minAlertLevel=warning --glob=!{.claude,.agents,.codex,.github}/**"
+      # vale-action installs into the runner tool cache but never adds it to PATH,
+      # so `make docs` below would otherwise die with "vale: No such file or directory".
+      - name: Put Vale on PATH
+        run: echo "/opt/hostedtoolcache/vale/${VALE_VERSION}/x64" >> "$GITHUB_PATH"
+      - name: Download the rule packages
+        run: make docs-sync
       - name: The gate
         run: make docs
 
