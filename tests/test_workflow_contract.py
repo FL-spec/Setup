@@ -293,5 +293,73 @@ class ProseGateContractTests(unittest.TestCase):
                 self.assertIn(artifact, gitignore)
 
 
+class VersionContractTests(unittest.TestCase):
+    """The README states the template's version twice — a header badge and a footer line.
+
+    v2.1.0 shipped with `v2.1` inserted *above* the old `v2.0` badge rather than replacing
+    it, and with the footer still reading v2.0. Neither gate noticed: Vale checks prose
+    style and validate_workflow.py checks links and file existence, so a README claiming
+    two versions at once is invisible to both. This class is the gate that would have.
+    """
+
+    import re as _re
+
+    VERSION = _re.compile(r"\bv\d+\.\d+(?:\.\d+)?\b")
+    README = REPO_ROOT / "README.md"
+
+    def _outside_the_history_section(self) -> str:
+        """`## Upgrading from v1` names superseded versions on purpose.
+
+        The section runs to the next horizontal rule. Table delimiters (`| --- |`) are not
+        bare rules, so they don't end it early.
+        """
+        text = self.README.read_text(encoding="utf-8")
+        start = text.index("## Upgrading from v1")
+        end = text.index("\n---\n", start)
+        return text[:start] + text[end:]
+
+    def _current_version(self) -> str:
+        found = set(self.VERSION.findall(self._outside_the_history_section()))
+        self.assertEqual(
+            1, len(found), f"README names {sorted(found)}; outside its history it must name one"
+        )
+        return found.pop()
+
+    def test_the_readme_names_exactly_one_version(self) -> None:
+        self._current_version()
+
+    def test_the_header_badge_is_not_a_stack_of_versions(self) -> None:
+        """The exact shape of the bug: a new badge added without deleting the old one."""
+        text = self.README.read_text(encoding="utf-8")
+        header = text[: text.index("</div>")]
+        badges = self.VERSION.findall(header)
+        self.assertEqual(1, len(badges), f"header badge block names {badges}")
+
+    def test_the_footer_matches_the_badge(self) -> None:
+        text = self.README.read_text(encoding="utf-8")
+        footer = text[text.rindex("<sub>") :]
+        self.assertIn(self._current_version(), footer)
+
+    def test_no_gated_document_names_a_superseded_version(self) -> None:
+        """Any document the prose gate covers has to agree with the README."""
+        import subprocess
+
+        current = self._current_version()
+        listed = subprocess.run(
+            ["git", "ls-files", "*.md"], cwd=REPO_ROOT, capture_output=True, text=True
+        ).stdout.split()
+        for name in listed:
+            if name.startswith((".claude/", ".agents/", ".codex/", ".github/")):
+                continue
+            text = (REPO_ROOT / name).read_text(encoding="utf-8")
+            if name == "README.md":
+                text = self._outside_the_history_section()
+            with self.subTest(document=name):
+                self.assertEqual(
+                    set(), set(self.VERSION.findall(text)) - {current},
+                    f"{name} names a version other than {current}",
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
