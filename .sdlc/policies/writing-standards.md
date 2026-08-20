@@ -70,6 +70,13 @@ make docs-sync   # re-download them
 Suggestions are advisory. Read them, act on the ones that improve the sentence, and ignore the
 rest.
 
+**Fix the sentence, never the alert.** Several Google rules ship an `action: edit` that Vale
+and editor integrations apply on request, and applying one without reading it changes what
+the sentence says. `Google.OxfordComma` is the one that bites: it fires on any `X and Y`
+later in a sentence that already holds a comma, whether or not that `and` ends a list. Adding
+its comma to "business calls become FDRs, technology and structure calls become ADRs" produces
+a three-item list that means nothing. Rewrite the sentence instead, usually by splitting it.
+
 **Three Google rules are turned off on purpose**, each recorded with a reason in `.vale.ini`:
 
 - `Google.Headings`, because the navigation files title-case their headings deliberately.

@@ -79,8 +79,8 @@ A brainstorm that should have been research burns a session on opinion where a f
 ## 3 · Document, then stop
 
 Resolved findings become durable documentation: PRDs in `wiki/prd/`, system shape in
-`wiki/architecture/`, exact **as-built** contracts in `specs/`, and dated decision records—FDRs
-for business calls, ADRs for technology, and ADRs for structure. Superseded, never deleted.
+`wiki/architecture/`, exact **as-built** contracts in `specs/`, and dated decision records.
+FDRs record business calls; ADRs record technology and structure. Superseded, never deleted.
 
 **Then stop for the human to read them.** Issues are outward state; they are not created from
 unreviewed docs. `write-document` and `create-issues` are two separate steps, always.

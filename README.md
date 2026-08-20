@@ -67,8 +67,8 @@ That last part is what keeps a plan coherent instead of a set of parallel monolo
   orchestrator keeps only the returned summaries—no context rot.
 - **Test-driven, always.** RED → GREEN → REFACTOR through the public interface. Tests are never
   weakened to pass; the gates run once before every commit.
-- **Decisions are durable and dated.** Business calls become FDRs, technology, and structure calls
-  become ADRs. Superseded, never deleted.
+- **Decisions are durable and dated.** Business calls become FDRs. Technology and structure
+  calls become ADRs. Superseded, never deleted.
 - **GitHub is the state store.** Issues, sub-issues, PRs and review threads—not a local
   progress file that goes stale the moment two sessions run at once.
 - **Cross-agent by construction.** `AGENTS.md` and `WORKFLOW.md` are the canonical contract, and
