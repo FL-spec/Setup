@@ -8,8 +8,6 @@ Spec-driven · Test-driven · Cross-agent · GitHub-native · Self-verifying · 
 
 `v2.1`
 
-`v2.0`
-
 </div>
 
 ---
@@ -229,6 +227,6 @@ their new homes.
 ---
 
 <div align="center">
-<sub>v2.0—the plan-maturity SDLC, generalized from a production repo. The interview method
+<sub>v2.1—the plan-maturity SDLC, generalized from a production repo. The interview method
 descends from Matt Pocock's <code>grill-with-docs</code>; everything else is ours.</sub>
 </div>
