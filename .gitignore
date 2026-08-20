@@ -18,3 +18,11 @@ build/
 
 # fl-* worktrees — issue branches and prototypes live here, never committed
 .worktrees/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Vale package cache — restored by `vale sync`
+.vale/styles/Google/
+.vale/styles/signs-of-ai-writing/

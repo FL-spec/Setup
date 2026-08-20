@@ -1,7 +1,7 @@
 # Master PRD
 
 > Seeded by `/fl-bootstrap`, filled in by a `/fl-pm` synthesize pass. **Don't invent
-> requirements** — an empty section is honest; a fabricated one is a trap for the next
+> requirements**—an empty section is honest; a fabricated one is a trap for the next
 > implementer.
 
 ## Vision & Goals

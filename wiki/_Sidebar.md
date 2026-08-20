@@ -1,6 +1,6 @@
 ### Start here
 - [Home](Home.md)
-- [CONTEXT — glossary](CONTEXT.md)
+- [CONTEXT—glossary](CONTEXT.md)
 
 ### Product
 - [Master PRD](prd/00-master-prd.md)

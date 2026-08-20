@@ -1,4 +1,4 @@
-# <NN>-<slug> — acceptance
+# <NN>-<slug>—acceptance
 
 Criterion-to-evidence traceability. One row per acceptance criterion across every issue this plan
 produced. The **integration verifier** fills the evidence columns; agent confidence is not

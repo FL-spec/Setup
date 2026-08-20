@@ -98,22 +98,65 @@ gh label create epic --color <hex>
 ```
 `gh label list` first; never clobber an existing label.
 
-**Project board** (skip when the user declined in step 1.5). Create it, then **derive** the ids —
-never hand-write them:
+**Project board** (skip when the user declined in step 1.5). Create it, derive the ids, then
+provision the five statuses the flow needs. Never hand-write an id.
+
 ```bash
 gh project create --owner <owner> --title "<repo> board"
-gh project list --owner <owner> --format json
+gh project list --owner <owner> --format json                   # -> number
 gh project view <number> --owner <owner> --format json          # -> project id
-gh project field-list <number> --owner <owner> --format json    # -> status field id + option ids
+gh project field-list <number> --owner <owner> --format json    # -> Status field id + options
 ```
-Write `project.enabled: true`, the number, the project id, the status field id, and the five
-status option ids into the config, with a dated comment recording the commands used, so a later
-404 is re-derivable.
 
-The default board has three statuses (Todo / In Progress / Done). The flow expects five —
-**Backlog, Ready, In progress, In review, Done**. Add the missing ones in the GitHub UI (single
-select field → new options) and re-run `field-list`; tell the user this is a UI step you can't do
-for them.
+A new board ships with three statuses (Todo / In Progress / Done). The flow needs five:
+**Backlog, Ready, In progress, In review, Done**. Provision them with `updateProjectV2Field`.
+
+**Read first, then write, and keep the ids.** `updateProjectV2Field` replaces the field's entire
+option set rather than appending to it. `ProjectV2SingleSelectFieldOptionInput` takes an optional
+`id`: resend every existing option **with its id** and the surviving options keep their identity,
+so nothing already on the board is orphaned. Omit an id and that option is recreated with a new
+one, silently detaching every item sitting in it.
+
+Read the current options:
+```bash
+gh api graphql -f query='
+query($org:String!, $num:Int!){ organization(login:$org){ projectV2(number:$num){
+  field(name:"Status"){ ... on ProjectV2SingleSelectField {
+    id options { id name color description } } } } } }' \
+  -f org=<owner> -F num=<number>
+```
+(Use `user(login:)` instead of `organization(login:)` for a personal account.)
+
+**Guard before writing.** Count the items already on the board:
+```bash
+gh project item-list <number> --owner <owner> --format json --jq '.items | length'
+```
+- **Zero items** — the normal bootstrap case. Safe to provision.
+- **Any items**, and the option set you are about to write differs from the one there by more than
+  pure additions — **stop.** Show the user the current options, the intended options, and the
+  difference, and let them decide. Re-running `/fl-bootstrap` on a live board is not a reason to
+  reshuffle statuses that issues are sitting in.
+
+Then write every option, existing ones carrying their ids:
+```bash
+gh api graphql -f query='
+mutation($field:ID!, $opts:[ProjectV2SingleSelectFieldOptionInput!]!){
+  updateProjectV2Field(input:{fieldId:$field, singleSelectOptions:$opts}){
+    projectV2Field { ... on ProjectV2SingleSelectField { id options { id name } } } } }' \
+  -f field=<status_field_id> -F opts='[
+    {"id":"<existing id or omit>","name":"Backlog","color":"GRAY","description":"Filed, not ready to build"},
+    {"name":"Ready","color":"BLUE","description":"Unblocked and buildable"},
+    {"name":"In progress","color":"YELLOW","description":"A worktree is open"},
+    {"name":"In review","color":"PURPLE","description":"PR open, awaiting review"},
+    {"name":"Done","color":"GREEN","description":"Merged and reconciled"}
+  ]'
+```
+`color` and `description` are **required** on every option; `id` is the only optional one. Valid
+colours: `GRAY BLUE GREEN YELLOW ORANGE RED PINK PURPLE`.
+
+Re-run `field-list` afterwards, confirm five options came back, and write their ids into
+`github.project.statuses.*` with `project.enabled: true` and a dated comment recording the
+commands, so a later 404 is re-derivable.
 
 **Token scopes.** `gh project` needs `read:project` + `write:project`. If `gh auth status` shows
 them missing, say so once and give the exact command:
