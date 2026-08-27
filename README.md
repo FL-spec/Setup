@@ -93,7 +93,18 @@ That last part is what keeps a plan coherent instead of a set of parallel monolo
 
 > Full walkthrough with copy-paste prompts: **[HOW_WE_BUILD.md](HOW_WE_BUILD.md)**
 
-## Start a new project
+## Set up a project
+
+### Prerequisites
+
+| You need | Because |
+| --- | --- |
+| `gh`, authenticated | issues and pull requests are the state store |
+| Python 3.11+ | the template's own gates (`make check`). `make install-dev` adds the two libraries that turn on deep config validation |
+| [Vale](https://vale.sh/) | the prose gate (`make docs`). It downloads its rule packages on first run, `make docs-sync` refreshes them, and CI installs it for you |
+| `read:project` and `write:project` | only for the project board: `gh auth refresh -s read:project,write:project`. Without a board, set `github.project.enabled: false` and the flow runs on issue state alone |
+
+### 1 · Create the repository
 
 ```bash
 gh repo create my-project --private --template FL-spec/Setup --clone
@@ -101,52 +112,60 @@ cd my-project
 claude
 ```
 
-Then, in Claude:
+### 2 · Bootstrap it once
 
 ```
 /fl-bootstrap
 ```
 
-It interviews you on stack and modules, writes the config and coding standards, verifies the
-quality gates **by running them**, wires CI, creates the labels, provisions the project board, and
-seeds `wiki/` and `specs/` with your real module names. After that, `/fl-pm` opens your first plan.
+One interview covers the stack, the modules, and the conventions, and what comes out of it is a
+repository wired end to end:
 
-**The board is fully provisioned, with no clicking.** A new GitHub project ships with three
-statuses; this flow needs five (Backlog, Ready, In progress, In review, Done). Bootstrap creates
-the board, derives the project, field, and option ids, and writes the missing statuses through
-`updateProjectV2Field`.
+| Bootstrap produces | Where it lands |
+| --- | --- |
+| identifiers, path templates, and gate commands | `.sdlc/sdlc-config.yml`, validated against `schemas/sdlc-config.schema.json` |
+| language conventions and non-negotiables | `.sdlc/policies/coding-standards.md` |
+| the quality gates, **verified by running them** | the config, then `.github/workflows/ci.yml` |
+| issue labels and a five-status project board | GitHub |
+| documentation seeded with your real module names | `wiki/`, `specs/` |
 
-That mutation deserves a note, because getting it wrong is silent and expensive: it **replaces**
-a single-select field's entire option set rather than appending to it. Resend the existing options
-without their ids and every one is recreated with a fresh id, detaching every issue sitting in it.
-So bootstrap reads the current options first, resends them **with their ids** alongside the new
-ones, and counts the items already on the board: zero items is the ordinary case and it proceeds,
-anything else and it stops to show you the difference rather than reshuffling statuses that issues
-are living in.
+Every skill reads that config rather than hardcoding a path or a command, so the flow follows your
+project's conventions instead of the template's defaults. Nothing else runs until bootstrap
+finishes.
 
-Claude reads `CLAUDE.md` at the start of every session, works out where the project actually is—
-from the config, the plan folders, open issues, open PRs and live worktrees—tells you, and
-prints the next command.
+**The board arrives provisioned, with nothing to click.** A new GitHub project ships three
+statuses and this flow needs five—Backlog, Ready, In progress, In review, Done—so bootstrap
+derives the project, field, and option ids and writes the missing statuses through GraphQL. That
+mutation replaces a single-select field's whole option set instead of appending to it, so bootstrap
+resends the existing options with their ids and stops rather than reshuffling a board that already
+holds items. [HOW_WE_BUILD.md](HOW_WE_BUILD.md) has the detail.
+
+### 3 · Open the first plan
+
+```
+/fl-pm
+```
+
+With nothing open, `/fl-pm` runs a brainstorm and writes the result to
+`wiki/plans/<NN>-<slug>/`. From there the preceding phases carry the work to a reviewed pull
+request.
+
+### Every session after that
+
+Claude reads `CLAUDE.md`, works out where the project actually is—from the config, the plan
+folders, open issues, open pull requests, and live worktrees—tells you, runs that step, and closes
+by printing the next command and whether to `/clear`. Describing what you want in plain language
+does the same thing: the always-on `fl-flow` router detects the step and continues from there.
 
 > Mark this repo as a template once: **Settings → Template repository** on GitHub, or
 > `gh repo edit FL-spec/Setup --template`.
 
-### Requirements
-
-- `gh` authenticated. Issues and PRs are required.
-- Python 3.11+ for the template's own gates (`make check`); `make install-dev` for the two
-  optional libraries that enable deep config validation.
-- [Vale](https://vale.sh/) for the prose gate (`make docs`), which downloads its rule
-  packages on first run. `make docs-sync` re-downloads them. CI installs it for you.
-- A project board is **optional**—`github.project.enabled: false` and the flow works from issue
-  state alone. With a board, `gh` needs `read:project` and `write:project`
-  (`gh auth refresh -s read:project,write:project`).
-
 ## Work from your phone
 
 This repo ships with a [dev container](.devcontainer/devcontainer.json) that pre-installs Claude
-Code in every GitHub Codespace—so you can drive the whole flow from a phone browser, no PC left
-running. See **[SETUP.md](SETUP.md)**.
+Code and Codex in every GitHub Codespace, alongside `gh` and the Node, Python, and Rust
+toolchains. You can drive the whole flow from a phone browser, with no PC left running. See
+**[SETUP.md](SETUP.md)**.
 
 ## What's in here
 
@@ -184,45 +203,31 @@ wiki/
   plans/             Plan folders: work items, acceptance and verification records
   reports/           Point-in-time reviews
 specs/               Exact contracts, as-built — 00-contracts.md + one per module
-.devcontainer/       Codespaces config with Claude Code preinstalled
+.devcontainer/       Codespaces config with Claude Code and Codex preinstalled
 .vale.ini            Prose gate: Google style + signs-of-ai-writing
+.vale/styles/        Downloaded rule packages (gitignored)
 ```
 
-## Upgrading from v1
+## Verify the template itself
 
-v2.0 folds in **both** earlier lines of work: the original `/idea → /grill → /autopilot` flow and
-the conversation-first cross-agent delivery contract that followed it.
+Separate from your project's quality gates, this repository checks itself:
 
-From the conversation-first work, v2.0 **keeps**: `AGENTS.md` and `WORKFLOW.md` as the canonical
-vendor-neutral contract, the `.agents/roles/` ↔ `.claude/agents/` ↔ `.codex/agents/` structure,
-command-free invocation (now the `fl-flow` router), the secret scanner and security workflow, the
-PR template, and the self-validating template contract behind `make check`.
+```bash
+make check
+```
 
-It **changes**: `specs/` now means the permanent as-built contract layer, so the per-feature
-workspace moved to `wiki/plans/<NN>-<slug>/`—where `acceptance.md` and `verification.md` keep
-the criterion-to-evidence trail. The execution-state JSON is gone: GitHub issues and PRs are the
-state store, and the JSON Schema now validates `.sdlc/sdlc-config.yml` instead. The
-`test-architect` role is gone—the slice implementer owns its own first failing test. And
-promotion never auto-merges: the PR is where automation stops.
+The workflow validator confirms that the canonical roles match both vendor adapters, every skill is
+invocable, every Markdown link resolves, wiki links stay inside `wiki/`, and the config still
+matches its JSON Schema. It then scans for secrets and runs the contract tests. CI runs the same
+gate on every pull request, and you should run it after changing the roles, the skills, or the
+shape of the config.
 
-From the v1 flow, the mapping:
+Prose has its own gate, because it fails for different reasons:
 
-| v1 | v2 |
-| --- | --- |
-| `/idea`, `/grill` (interview) | `/fl-brainstorm` |
-| `/grill` (PRD synthesis) | `/fl-pm` synthesize → `wiki/prd/` + `specs/` |
-| `/autopilot` (slicing) | `/fl-pm` issues → GitHub issues with the LOC gate |
-| `/autopilot` (dispatch) | `/fl-implement <N>`, or `/fl-implement N to M` |
-| `slice-implementer`, `reviewer` agents | `coder.md`, `reviewer.md` briefs → general-purpose subagents |
-| `/improve-code` | `/fl-pm` post-merge reconcile |
-| `progress.txt` | GitHub issues + `wiki/plans/<NN>-<slug>/0-plan_map.md` |
-| `CONTEXT.md` (root) | `wiki/CONTEXT.md` |
-| `docs/adr/` | `wiki/architecture/decisions/` (ADRs) + `wiki/prd/decisions/` (FDRs) |
-| `AGENTS.md` (conventions) | `.sdlc/policies/coding-standards.md`; `AGENTS.md` is now a pointer |
-
-An existing v1 project keeps working as it is—v2 is for repos you start from the template now.
-To migrate one, run `/fl-bootstrap` and move the contents of `CONTEXT.md` and `docs/adr/` to
-their new homes.
+```bash
+make docs             # Google style + signs-of-ai-writing, warnings fail
+make docs-suggestions # advisory: everything the gate let through
+```
 
 ---
 

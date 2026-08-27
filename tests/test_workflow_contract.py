@@ -307,14 +307,19 @@ class VersionContractTests(unittest.TestCase):
     VERSION = _re.compile(r"\bv\d+\.\d+(?:\.\d+)?\b")
     README = REPO_ROOT / "README.md"
 
-    def _outside_the_history_section(self) -> str:
-        """`## Upgrading from v1` names superseded versions on purpose.
+    HISTORY_HEADING = "## Upgrading from v1"
 
-        The section runs to the next horizontal rule. Table delimiters (`| --- |`) are not
-        bare rules, so they don't end it early.
+    def _outside_the_history_section(self) -> str:
+        """A version-history section names superseded versions on purpose.
+
+        The README carries none today; the exclusion stays so that reinstating one doesn't
+        fail this class. Such a section runs to the next horizontal rule, and table
+        delimiters (`| --- |`) are not bare rules, so they don't end it early.
         """
         text = self.README.read_text(encoding="utf-8")
-        start = text.index("## Upgrading from v1")
+        if self.HISTORY_HEADING not in text:
+            return text
+        start = text.index(self.HISTORY_HEADING)
         end = text.index("\n---\n", start)
         return text[:start] + text[end:]
 
