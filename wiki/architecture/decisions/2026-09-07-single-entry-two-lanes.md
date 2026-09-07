@@ -8,7 +8,7 @@
 Delivering one small change costs six skill invocations, three hand-typed `/clear` commands, two
 blocking stops for the developer, and six subagent spawns. That's the happy path, with no
 research, no prototype, and no review round. `.claude/skills/fl-implement/SKILL.md` runs the
-feasibility gate on every issue, "including the ones that look small", so a one-line fix pays the
+feasibility gate on every issue, "including the ones that look small," so a one-line fix pays the
 same toll as a new module.
 
 About half the work in a typical week is a change the developer can state in one sentence against
@@ -74,7 +74,7 @@ stops checking for drift that can no longer happen.
 `github.project.enabled` ships as `true`, because a team reads readiness off a board rather than
 off a `Depends On` line.
 
-The mandatory `/clear` between skills goes. It's a command the developer types in order to discard
+The mandatory `/clear` between skills goes. It's a command the developer types to discard
 the context that would let the agent route without asking.
 
 ## Consequences
