@@ -21,6 +21,7 @@
 
 - [Architecture](architecture/00-architecture.md)
 - [Architecture decisions (ADRs)](architecture/decisions/0000-template.md)
+- [2026-09-07—Single entry point and two delivery lanes](architecture/decisions/2026-09-07-single-entry-two-lanes.md)
 
 ## Contracts
 
