@@ -154,8 +154,8 @@ request.
 
 Claude reads `CLAUDE.md`, works out where the project actually is—from the config, the plan
 folders, open issues, open pull requests, and live worktrees—tells you, runs that step, and closes
-by printing the next command and whether to `/clear`. Describing what you want in plain language
-does the same thing: the always-on `fl-flow` router detects the step and continues from there.
+by telling you what changed and what comes next. Describing what you want in plain language does
+the same thing: the always-on `fl-flow` router detects the step and continues from there.
 
 > Mark this repo as a template once: **Settings → Template repository** on GitHub, or
 > `gh repo edit FL-spec/Setup --template`.
@@ -172,7 +172,7 @@ toolchains. You can drive the whole flow from a phone browser, with no PC left r
 ```
 AGENTS.md            Canonical, vendor-neutral agent contract — every agent reads this
 WORKFLOW.md          Canonical delivery state machine (mermaid), all agents
-CLAUDE.md            Claude adapter: session navigator, /clear policy, role dispatch
+CLAUDE.md            Claude adapter: session navigator, detection table, role dispatch
 HOW_WE_BUILD.md      The method, with ready-to-copy prompts
 README.md            You are here
 SETUP.md             Phone / Codespaces workflow

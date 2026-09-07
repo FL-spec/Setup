@@ -3,9 +3,9 @@ name: fl-bootstrap
 description: >
   First-run setup for a repo cloned from this template: interview the developer on stack and
   modules, fill in .sdlc/sdlc-config.yml and coding-standards, wire the quality gates and CI,
-  create the labels and (optionally) the project board, and seed wiki/ + specs/ with real module
-  names. Use once per new project, when sdlc-config.yml still holds <ANGLE BRACKET> placeholders,
-  or when the user says "/fl-bootstrap", "set up this repo", or "configure the project".
+  create the labels and the project board, and seed wiki/ + specs/ with real module names. Runs
+  once per project. Invoked by fl-flow, or when the user types /fl-bootstrap.
+routed-by: fl-flow
 ---
 
 # Bootstrap
@@ -194,4 +194,4 @@ with the Open-gaps line that records why), the labels and board created, and wha
 human in the GitHub UI.
 
 **Handoff:** "Repo bootstrapped. Next: `/fl-pm` to open your first plan — it'll run
-`/fl-brainstorm` to shape it. Recommend `/clear` first."
+`/fl-brainstorm` to shape it."

@@ -26,7 +26,7 @@ _[Logging, config, auth, error handling, observability—whatever actually spans
 
 > Links into `architecture/decisions/`. Superseded ADRs stay listed, marked as superseded.
 
-- _(none yet)_
+- [2026-09-07—Single entry point and two delivery lanes](decisions/2026-09-07-single-entry-two-lanes.md)
 
 ## Open Questions
 

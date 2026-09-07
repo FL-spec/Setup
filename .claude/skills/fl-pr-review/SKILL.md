@@ -2,9 +2,9 @@
 name: fl-pr-review
 description: >
   Two-axis review (Standards + Spec) of the changes since a fixed point — commit, branch, tag,
-  or merge-base — published as one real GitHub PR review with inline comments and suggestions,
-  submitted as COMMENT or REQUEST_CHANGES. Use when the user wants to review a branch, a PR,
-  work-in-progress changes, or asks to "review since X".
+  or merge-base — published as one real GitHub PR review with inline comments and suggestions.
+  Invoked by fl-flow, or when the user types /fl-pr-review <base>.
+routed-by: fl-flow
 ---
 
 # PR Review

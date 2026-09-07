@@ -2,8 +2,9 @@
 name: fl-brainstorm
 description: >
   Relentless one-question-at-a-time interview that takes a diffuse idea to a set of resolved
-  work items sharing one goal. Use when the user wants to open or shape a plan, stress-test a
-  design or decision, asks to be grilled, or a fl-pm plan work item's next step is a brainstorm.
+  work items sharing one goal. Writes no files; reports back to fl-pm. Invoked by fl-flow, or
+  when the user types /fl-brainstorm.
+routed-by: fl-flow
 ---
 
 # Brainstorm
@@ -65,5 +66,5 @@ set of independently actionable work items, each with its next step.
 **Report** to `/fl-pm`: the summary, the pinned domain terms, the work items with their next
 steps, and any question you deliberately left open with the reason it's still open.
 
-**Handoff:** "Brainstorm resolved into <N> work items. Next: `/fl-pm` to record them and
-advance the first. Recommend `/clear` first."
+**Handoff:** "Brainstorm resolved into <N> work items. Next: recording them and advancing the
+first (`/fl-pm` to run it directly)."

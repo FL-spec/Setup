@@ -113,5 +113,5 @@ move from `SKILL.md`:
 Every created issue number with a one-line summary, the sub-issue link confirmed for each, and
 each status confirmed set.
 
-**Handoff:** "Issues #N–#M filed, #N and #P are unblocked. Next: `/fl-implement <N>`.
-Recommend `/clear` first."
+**Handoff:** "Issues #N–#M filed, #N and #P are unblocked. Next: implementing #N
+(`/fl-implement <N>` to run it directly)."

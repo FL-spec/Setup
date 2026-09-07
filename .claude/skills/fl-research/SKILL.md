@@ -1,9 +1,9 @@
 ---
 name: fl-research
 description: >
-  Investigate a question against primary sources and return cited findings. Use when an
-  answer turns on an external fact — library semantics, an API's real behavior, a spec, a
-  data format — or when a fl-pm plan work item's next step is research.
+  Investigate a question against primary sources and return cited findings, every claim
+  attributed. Invoked by fl-flow, or when the user types /fl-research.
+routed-by: fl-flow
 ---
 
 # Research

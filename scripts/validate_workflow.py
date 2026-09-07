@@ -104,6 +104,9 @@ CODE_SPAN = re.compile(r"`[^`\n]*`")
 FENCE = re.compile(r"```.*?```", re.DOTALL)
 LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 FRONTMATTER_NAME = re.compile(r"^name:\s*(\S+)\s*$", re.MULTILINE)
+FRONTMATTER_BLOCK = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
+ROUTED_BY = re.compile(r"^routed-by:\s*fl-flow\s*$", re.MULTILINE)
+PLAIN_LANGUAGE_TRIGGER = re.compile(r"Use when the user", re.IGNORECASE)
 PLACEHOLDER = re.compile(r"<[A-Z][A-Z0-9_]*>")
 
 
@@ -174,6 +177,40 @@ def _check_skills(root: Path, errors: list[str]) -> None:
             )
     if found != SKILL_NAMES:
         errors.append(f"skill set {sorted(found)} != contract {sorted(SKILL_NAMES)}")
+
+
+def _check_router_exclusivity(root: Path, errors: list[str]) -> None:
+    """Exactly one skill matches plain language; every other one is routed to it.
+
+    The model selects a skill by matching its `description`. When nine skills each carry
+    their own plain-language triggers, the router is one candidate among ten for the same
+    sentence and the developer ends up naming the command by hand. See
+    wiki/architecture/decisions/2026-09-07-single-entry-two-lanes.md.
+    """
+    unrouted = []
+    for skill in sorted((root / ".claude/skills").glob("*/SKILL.md")):
+        name = skill.parent.name
+        block = FRONTMATTER_BLOCK.match(skill.read_text(encoding="utf-8"))
+        if not block:
+            errors.append(f"{name}: SKILL.md has no frontmatter block")
+            continue
+        frontmatter = block.group(1)
+        if not ROUTED_BY.search(frontmatter):
+            unrouted.append(name)
+            continue
+        if f"/{name}" not in frontmatter:
+            errors.append(f"{name}: description does not name its own /{name} invocation")
+        if PLAIN_LANGUAGE_TRIGGER.search(frontmatter):
+            errors.append(
+                f"{name}: description carries a plain-language trigger clause — "
+                f"those belong to fl-flow, which is the only skill that matches plain language"
+            )
+
+    if unrouted != ["fl-flow"]:
+        errors.append(
+            f"exactly one skill may match plain language; skills without "
+            f"'routed-by: fl-flow' are {unrouted} (expected ['fl-flow'])"
+        )
 
 
 def _check_links(root: Path, errors: list[str]) -> None:
@@ -280,6 +317,7 @@ def validate(root: Path = REPO_ROOT) -> list[str]:
     _check_parseable(root, errors)
     _check_roles(root, errors)
     _check_skills(root, errors)
+    _check_router_exclusivity(root, errors)
     _check_links(root, errors)
     _check_wiki_links_stay_inside(root, errors)
     _check_workflow_contract(root, errors)

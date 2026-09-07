@@ -35,6 +35,40 @@ class WorkflowContractTests(unittest.TestCase):
         text = (REPO_ROOT / ".claude/skills/fl-flow/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("user-invocable: false", text)
 
+    def test_only_the_router_matches_plain_language(self) -> None:
+        """Nine skills carrying their own triggers make fl-flow one candidate among ten."""
+        unrouted = []
+        for skill in sorted(SKILL_NAMES):
+            path = REPO_ROOT / f".claude/skills/{skill}/SKILL.md"
+            frontmatter = path.read_text(encoding="utf-8").split("---")[1]
+            if "routed-by: fl-flow" not in frontmatter:
+                unrouted.append(skill)
+                continue
+            with self.subTest(skill=skill):
+                self.assertIn(
+                    f"/{skill}",
+                    frontmatter,
+                    f"{skill} must name its own slash command in its description",
+                )
+                self.assertNotIn(
+                    "Use when the user",
+                    frontmatter,
+                    f"{skill} must not carry plain-language triggers — those belong to fl-flow",
+                )
+        self.assertEqual(["fl-flow"], unrouted, "exactly one skill may match plain language")
+
+    def test_no_gated_document_mandates_clearing_context(self) -> None:
+        """/clear is a command the developer types to discard what the router needs."""
+        documents = [REPO_ROOT / name for name in ("CLAUDE.md", "README.md", "HOW_WE_BUILD.md")]
+        documents += sorted((REPO_ROOT / ".claude/skills").rglob("*.md"))
+        for path in documents:
+            with self.subTest(document=path.name):
+                self.assertNotIn(
+                    "/clear",
+                    path.read_text(encoding="utf-8"),
+                    f"{path.relative_to(REPO_ROOT)} still instructs the developer to /clear",
+                )
+
     def test_guardrails_hook_is_executable_and_blocks_force_push(self) -> None:
         import json
         import subprocess

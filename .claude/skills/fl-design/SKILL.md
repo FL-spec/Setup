@@ -2,9 +2,9 @@
 name: fl-design
 description: >
   Design and build a user-facing surface that looks deliberate rather than generated, then
-  verify it by looking at it. Use when building or restyling any UI, when a prototype's winning
-  variant becomes real, or when the user says a screen looks generic, bland, or "AI-made".
-  Owns the design-token contract in specs/.
+  verify it by looking at it. Owns the design-token contract in specs/. Invoked by fl-flow, or
+  when the user types /fl-design.
+routed-by: fl-flow
 ---
 
 # Design
