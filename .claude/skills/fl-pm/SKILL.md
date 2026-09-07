@@ -2,11 +2,10 @@
 name: fl-pm
 description: >
   Own the backlog and the docs: maintain a plan from diffuse work items through to
-  ready-to-build, synthesize a finished plan into wiki/ and specs/, slice it into GitHub
-  issues, unblock dependents, and reconcile after a merge. Use when the user fires "/fl-pm",
-  opens or resumes a plan, asks what to advance or work on next, reports back from a
-  brainstorm/research/prototype/diagnosis session, says "synthesize this plan", "plan issues",
-  or "post-merge".
+  ready-to-build, synthesize a finished plan into wiki/ and specs/, slice it into GitHub issues,
+  unblock dependents, and reconcile after a merge. Invoked by fl-flow, or when the user types
+  /fl-pm.
+routed-by: fl-flow
 ---
 
 # Product Manager
@@ -96,6 +95,9 @@ from unreviewed docs are outward state the user never agreed to.
 Every `/fl-pm` session ends by printing, in this order:
 1. **What changed** — files written, issues filed, statuses moved.
 2. **Where the plan stands** — the work item that advanced and what it changed elsewhere.
-3. **The next command**, named exactly: `/fl-brainstorm`, `/fl-research`, `/fl-prototype`,
-   `/fl-diagnose`, `/fl-implement <N>`, or `/fl-pm` again.
-4. **Whether to `/clear`** — yes when the next command is a different skill; never mid-plan.
+3. **What happens next** — the step, and the command that runs it directly if the developer
+   wants that control: `/fl-brainstorm`, `/fl-research`, `/fl-prototype`, `/fl-diagnose`,
+   `/fl-implement <N>`, or `/fl-pm` again.
+
+Recommend proceeding rather than waiting to be asked. Naming the command is for the developer
+who wants direct control; it is never something they must type for you to continue.

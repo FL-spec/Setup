@@ -23,9 +23,11 @@ spec's §7 Current State.
 ## Conversation-first behavior
 
 When asked to plan or build something, inspect the repository and work out what step the project
-is actually on (`CLAUDE.md` holds the detection table), then continue from there. Open or resume
-the plan yourself, interview the human one material decision at a time, and write what gets
-resolved into the plan.
+is actually on: read `.sdlc/sdlc-config.yml` for unfilled placeholders, then the plan folders,
+the open issues, the open pull requests, and the live worktrees. An unbootstrapped config beats
+everything; after that, prefer the work closest to shipping, because finishing beats starting.
+Continue from the step that detection names. Open or resume the plan yourself, interview the
+human one material decision at a time, and write what gets resolved into the plan.
 
 **Never ask the human to run a workflow command, create internal files, or repeat the same intent
 in a second prompt.** The explicit `/fl-*` commands exist for when they want direct control; they

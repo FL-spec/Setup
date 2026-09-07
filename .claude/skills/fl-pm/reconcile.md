@@ -62,5 +62,5 @@ Rank the Ready issues by:
 Present the ranking with a one-line rationale per pick, and ask the user to confirm or
 override.
 
-**Handoff:** "Ready queue: #N, #P, #Q. Recommended next: `/fl-implement <N>` — <one-line
-reason>. Recommend `/clear` first."
+**Handoff:** "Ready queue: #N, #P, #Q. Recommended next: implementing #N — <one-line reason>
+(`/fl-implement <N>` to run it directly)."

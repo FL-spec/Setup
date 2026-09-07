@@ -1,6 +1,14 @@
 ---
 name: fl-flow
-description: Route a plain-language request into this repository's delivery workflow — detect what step the project is actually on and continue from there. Invoke automatically whenever the user talks about planning, building, reviewing, fixing, or shipping something here; no slash command is required.
+description: >
+  The single plain-language entry point to this repository's delivery workflow — detect what step
+  the project is actually on and continue from there. Invoke automatically whenever the user talks
+  about this repo's work in ordinary language: a new idea or fuzzy goal, what to build or work on
+  next, the backlog, stress-testing a design, asking to be grilled, an external fact that decides
+  something, what a screen should look like, something being wrong or producing wrong values,
+  building or resuming an issue, review comments on a PR, reviewing a branch or diff, a merge that
+  just landed, or a repo that was never configured. No slash command is required, and the /fl-*
+  skills never match plain language themselves — this skill routes to them.
 user-invocable: false
 ---
 
@@ -30,7 +38,8 @@ Read them rather than improvising a lifecycle.
 | a new idea, a fuzzy goal, "what should we build" | `fl-pm` (which opens a plan via `fl-brainstorm`) |
 | what to work on next, the backlog, a merge that just landed | `fl-pm` |
 | an external fact — a library's real behavior, an API, a spec | `fl-research` |
-| what something should look like, or whether a model holds up | `fl-prototype` |
+| whether a state model or data shape holds up; exploring UI variants before committing | `fl-prototype` |
+| building or restyling a real surface, or a screen that reads as generic | `fl-design` |
 | something being wrong, wrong values, a failing path | `fl-diagnose` |
 | building a specific issue, or resuming one | `fl-implement` |
 | review comments on a PR | `fl-implement` (its feedback loop) |

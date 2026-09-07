@@ -1,12 +1,12 @@
 ---
 name: fl-implement
 description: >
-  Run the implementation loop for one GitHub issue — or a batch of them in one worktree and
-  one PR: feasibility gate, a coder subagent in a worktree, a reviewer subagent (max 3 rounds),
-  a PR that closes the issue(s), then the feedback loop that drives every review comment on
-  that PR to resolved. Use when the user fires "/fl-implement <issue#>", "implement issue N",
-  "implement issues N to M", "build issue N", or asks to handle the Copilot/CodeRabbit/review
-  comments on a PR. Requires gh auth and a planned issue.
+  Run the implementation loop for one GitHub issue, or a batch of them in one worktree and one
+  PR: feasibility gate, a coder subagent in a worktree, a reviewer subagent (max 3 rounds), a PR
+  that closes the issue, then the feedback loop that drives every review comment to resolved.
+  Requires gh auth and a planned issue. Invoked by fl-flow, or when the user types
+  /fl-implement <issue#>.
+routed-by: fl-flow
 ---
 
 # Implement Loop

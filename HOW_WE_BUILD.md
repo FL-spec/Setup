@@ -4,7 +4,7 @@
 /fl-bootstrap → /fl-pm ⇄ (brainstorm · research · prototype · diagnose) → /fl-pm → /fl-implement → /fl-pm
 ```
 
-You drive the thinking. Agents drive the building. `/clear` between skills.
+You drive the thinking. Agents drive the building. You don't type the commands.
 
 **You don't have to type any of these.** Describe what you want in plain language and the
 always-on router works out which step you're on and continues from there—the commands below are
@@ -178,8 +178,8 @@ which direction you want.
 | Handle PR comments | `/fl-implement <PR#>` |
 | Reconcile after a merge | `/fl-pm` |
 
-**Rules:** `/clear` between skills · never `/compact` · vertical slices only · tests never
-weakened · specs updated in the same PR · never auto-merge.
+**Rules:** never `/compact` · vertical slices only · tests never weakened · specs updated in
+the same PR · never auto-merge.
 
 ---
 

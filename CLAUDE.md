@@ -3,7 +3,7 @@
 **[AGENTS.md](AGENTS.md) and [WORKFLOW.md](WORKFLOW.md) are the canonical contract**—read them
 before acting, together with `.sdlc/policies/coding-standards.md`, `wiki/CONTEXT.md`, the active
 specs, and the relevant decision records. This file is the Claude-side adapter: it adds the
-session navigator and the `/clear` policy, and it never contradicts the two preceding files.
+session navigator and the detection table, and it never contradicts the two preceding files.
 
 This repo runs a spec-driven, test-driven SDLC through the `fl-*` skills. Work **matures**
 through it: a diffuse idea becomes resolved work items, then documentation, then issues, then a
@@ -22,8 +22,7 @@ reviewed PR.
 ```
 
 **At the start of every session:** detect where the project actually is, tell the developer,
-run that step, and end by printing the next command and whether to `/clear`. Never leave them
-guessing what comes next.
+run that step, and end by printing what changed and what comes next. Never leave them guessing.
 
 **You don't need to be given a command.** When the developer describes what they want in ordinary
 language, the always-on `fl-flow` router detects the step and continues from there—the `/fl-*`
@@ -61,26 +60,24 @@ recommend one—the one closest to shipping, since finishing beats starting.
 
 ## 2 · End every step with a handoff
 
-Every `fl-*` skill closes by printing four things, and you enforce it even when a skill's own
+Every `fl-*` skill closes by printing three things, and you enforce it even when a skill's own
 run was cut short:
 
 1. **What changed**—files, issues, PRs, statuses.
 2. **Where that leaves the project**—in the vocabulary of the preceding table.
-3. **The next command, named exactly**—`/fl-implement 14`, not "you could implement something."
-4. **Whether to `/clear`.**
+3. **What happens next**—the step, and the command that runs it directly if the developer wants
+   that control.
 
 **Recommend proceeding.** When the next step is unambiguous, say what you'd do and offer to do
 it now rather than waiting to be asked. Stop and ask only where a decision is genuinely the
 developer's: a scope call, an outward-facing action (issues, PRs, comments), or a blocker.
 
-## 3 · When to `/clear`
+## 3 · Context
 
-- **Between skills**—a `/fl-pm` session followed by `/fl-implement` starts clean.
-- **Not mid-plan.** A brainstorm or a plan-advance session keeps its context to the end.
-- **Not per slice.** Coder and reviewer run in their own subagents; the orchestrator only ever
-  holds their summaries.
-- `/clear` the orchestrator mid-batch only if its context has grown large across many issues.
-- **Never `/compact`**—it leaves context sediment.
+Clear the context when the developer moves to unrelated work, and not as a routine step between
+skills—the session's accumulated state is what lets the router know where the project is without
+asking. Coder and reviewer run in their own subagents, so the orchestrator only ever holds their
+summaries and grows slowly. **Never `/compact`**—it leaves context sediment.
 
 ---
 

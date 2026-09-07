@@ -1,9 +1,9 @@
 ---
 name: fl-diagnose
 description: >
-  Find the cause of a defect or anomaly in the codebase or the stored data — wrong values, a
-  failing path, drift between what's stored and what's expected. Use when something is wrong
-  and the mechanism isn't known, or a fl-pm plan work item's next step is a diagnosis.
+  Find the cause of a defect or anomaly in the codebase or the stored data, and prove the
+  mechanism without fixing it. Invoked by fl-flow, or when the user types /fl-diagnose.
+routed-by: fl-flow
 ---
 
 # Diagnose

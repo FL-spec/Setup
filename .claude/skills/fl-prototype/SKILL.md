@@ -2,8 +2,9 @@
 name: fl-prototype
 description: >
   Build throwaway code that answers a design question — whether a state model, data shape, or
-  layout is right — then keep the answer and delete the code. Use when a question can't be
-  settled on paper, or a fl-pm plan work item's next step is a prototype.
+  layout is right — then keep the answer and delete the code. Invoked by fl-flow, or when the
+  user types /fl-prototype.
+routed-by: fl-flow
 ---
 
 # Prototype
