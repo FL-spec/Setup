@@ -14,8 +14,19 @@ re-use it if it fits.
 | **Feature** | Time-bounded development of a new, self-contained capability | `feature` |
 | **Task** | A purely operational or maintenance container (runbook, chore batch) | `task` |
 
-Parent + sub-issue structure is a **recommendation**. Use it where it adds clarity; a flat set
-of issues with no meaningful grouping is fine as it is.
+**Every plan has exactly one epic, and every issue sliced from a plan is a sub-issue of it —
+directly or through a nested feature/task parent.** This is required, not optional: the board is
+read epic-first, and a flat issue with no parent is invisible from its plan. The epic is titled
+`Epic: Plan NN — <plan title>`, links the plan's `0-plan_map.md`, and is created the first time
+the plan is sliced; later slicing runs re-use it. A follow-up or re-slice of an existing issue
+becomes a sub-issue of that issue (or of the same epic). Before reporting, confirm no issue you
+created is left without a parent.
+
+**Find or create the epic first.** Read the `**Epic:**` line in the plan's `0-plan_map.md`
+header. If it names an issue, re-use it (reopen it if it was closed). If it says `none yet`,
+create `Epic: Plan NN — <plan title>` with the `epic` label, a Summary linking the plan map and
+an empty `## Children` checklist, and write its link back into that `**Epic:**` line in the same
+session. Never create a second epic for a plan.
 
 ## 1. Read and audit
 
@@ -83,8 +94,8 @@ issue touches, creating it only if none fits. Parent issues get their type label
 
 ## 5. Link children to their parent
 
-A child issue under a parent gets a **native GitHub sub-issue link** — this is what makes a
-merged PR tick the parent's boxes:
+Every child issue gets a **native GitHub sub-issue link** to its plan epic (or nested parent) —
+this is what makes a merged PR tick the parent's boxes:
 ```bash
 child_id=$(gh api repos/<owner>/<repo>/issues/<child_number> --jq '.id')
 gh api repos/<owner>/<repo>/issues/<parent_number>/sub_issues -X POST -F sub_issue_id=$child_id
@@ -110,8 +121,8 @@ move from `SKILL.md`:
 
 ## 7. Report
 
-Every created issue number with a one-line summary, the sub-issue link confirmed for each, and
-each status confirmed set.
+The plan's epic (created or re-used), every created issue number with a one-line summary, the
+sub-issue link confirmed for each, and each status confirmed set.
 
 **Handoff:** "Issues #N–#M filed, #N and #P are unblocked. Next: implementing #N
 (`/fl-implement <N>` to run it directly)."

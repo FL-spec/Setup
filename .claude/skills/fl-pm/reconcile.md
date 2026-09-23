@@ -20,6 +20,10 @@ After an issue's PR merges:
    git worktree prune
    ```
 5. Board move → `done` (skipped when `github.project.enabled` is false).
+   Then walk up the issue's parents (`gh api graphql` → `issue(number:N){parent{number}}`). For
+   each parent whose sub-issues are now all closed: tick its checklist, close it, and board move
+   → `done` — unless it is a plan epic and the plan is not yet `complete`, in which case leave it
+   open. When a plan is marked `complete`, close its epic in the same pass.
 6. Run the triage below to unblock dependents.
 7. Report a one-paragraph summary, including any issues just moved to Ready.
 

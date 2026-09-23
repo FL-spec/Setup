@@ -15,9 +15,10 @@ One folder per plan: `wiki/plans/<NN>-<slug>/`, where `<NN>` is the next immutab
 repository-wide two-digit sequence number — scan existing folders for the highest before
 assigning.
 
-**`0-plan_map.md`** — the permanently readable index. A header block with plan **Status**
-(`active`, `parked`, `complete`), **Date**, and a one-paragraph **Summary** of the goal. Then
-a table:
+**`0-plan_map.md`** — the permanently readable index. A header block with the plan's **Epic**
+(the GitHub parent issue every issue sliced from this plan sits under — `none yet` until the
+first slice creates it), plan **Status** (`active`, `parked`, `complete`), **Date**, and a
+one-paragraph **Summary** of the goal. Then a table:
 
 | Work item | Next step | Description | Status |
 

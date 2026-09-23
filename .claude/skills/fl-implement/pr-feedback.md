@@ -108,7 +108,12 @@ any carry-forward note already in the PR description. **Ask the user** in one ba
 covering all of them, flagging which you found already tracked so they aren't re-deciding
 something settled. On a yes, open each as its own issue — referencing the PR and comment it came
 from, labelled per the repo's conventions, and carrying a concrete fix sketch plus acceptance
-criteria rather than a restatement of the finding.
+criteria rather than a restatement of the finding. Every follow-up opened here is a **native
+sub-issue of the issue this PR closes** (`gh api repos/<owner>/<repo>/issues/<NNN>/sub_issues -X
+POST -F sub_issue_id=<child id>`), with a checklist line added to that issue's body — never a
+parentless issue. That keeps it under the same plan epic. If the follow-up clearly belongs to a
+different plan, link it under that plan's epic instead (the `**Epic:**` line in its
+`0-plan_map.md`) and say so in the report.
 
 ## 9. Resolve merge conflicts
 
