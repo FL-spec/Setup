@@ -390,6 +390,9 @@ class VersionContractTests(unittest.TestCase):
         for name in listed:
             if name.startswith((".claude/", ".agents/", ".codex/", ".github/")):
                 continue
+            # The changelog is the version history, so it names every release on purpose.
+            if name == "CHANGELOG.md":
+                continue
             text = (REPO_ROOT / name).read_text(encoding="utf-8")
             if name == "README.md":
                 text = self._outside_the_history_section()

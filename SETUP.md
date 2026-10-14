@@ -53,7 +53,7 @@ Don't edit pages in the GitHub Wiki UI: it's a mirror, and the next sync overwri
 
 ## Day to day
 
-- Reopen your existing Codespace from https://github.com/codespaces (faster than creating one).
+- Reopen your existing Codespace from [github.com/codespaces](https://github.com/codespaces) (faster than creating one).
 - Run `claude` and work as normal.
 - Worktrees created by `/fl-implement` live in `.worktrees/` and are gitignored.
 - Before committing template changes, run `make check`—CI runs the same gate.
@@ -69,7 +69,7 @@ Don't edit pages in the GitHub Wiki UI: it's a mirror, and the next sync overwri
 
 - **Phone browser:** the Codespaces web editor works in mobile Safari/Chrome. Request the desktop
   site for a better terminal experience.
-- **Stop when idle:** Codespaces bill by usage. Stop yours from https://github.com/codespaces
+- **Stop when idle:** Codespaces bill by usage. Stop yours from [github.com/codespaces](https://github.com/codespaces)
   when you're done. Stopped Codespaces keep your files; they just don't run.
 - **If Claude Code isn't found** after opening a Codespace, install it manually:
 
