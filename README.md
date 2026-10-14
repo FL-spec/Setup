@@ -2,34 +2,36 @@
 
 # Setup
 
-**A clean-sheet starting point for new projects, with a full AI-native SDLC built in.**
+A GitHub template that starts every project with a spec-driven, test-driven delivery workflow run by AI agents.
 
-Spec-driven · Test-driven · Cross-agent · GitHub-native · Self-verifying · Phone-ready
+[![CI](https://github.com/FL-spec/Setup/actions/workflows/ci.yml/badge.svg)](https://github.com/FL-spec/Setup/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/FL-spec/Setup)](https://github.com/FL-spec/Setup/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-`v2.1`
+`v2.1.1`
+
+[How we build](HOW_WE_BUILD.md) · [Workflow](WORKFLOW.md) · [Agent contract](AGENTS.md) · [Phone setup](SETUP.md) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
 
 </div>
 
----
-
-Clone this, rename it, and you start every project on the same rails: a disciplined flow that
-takes a diffuse idea through design, documentation, and buildable issues to reviewed pull
-requests—with AI doing the heavy lifting and you keeping every decision that matters.
+Create a repository from this template and every project starts on the same rails. A diffuse
+idea moves through design, documentation and buildable issues to a reviewed pull request. Agents
+do the building; you keep every decision that matters. It runs under Claude Code and Codex.
 
 ## How we develop
 
 Work **matures**. It doesn't get pushed through a pipeline.
 
-```
-/fl-bootstrap  (once per repo)
-      ↓
-/fl-pm  ⇄  /fl-brainstorm · /fl-research · /fl-prototype · /fl-diagnose
-      ↓        one work item, one next step at a time
-/fl-pm  →  docs in wiki/ + specs/  →  GitHub issues
-      ↓
-/fl-implement <N>  →  worktree → coder → reviewer → PR → feedback loop
-      ↓
-/fl-pm  post-merge  →  specs reconciled, dependents unblocked
+```mermaid
+flowchart TD
+    B["/fl-bootstrap<br/>once per repo"] --> PM["/fl-pm<br/>plan"]
+    PM <--> L["/fl-brainstorm · /fl-research<br/>/fl-prototype · /fl-diagnose"]
+    PM --> D["docs in wiki/ and specs/"]
+    D --> I["GitHub issues"]
+    I --> IMP["/fl-implement N<br/>worktree, coder, reviewer"]
+    IMP --> PR["reviewed pull request"]
+    PR --> R["/fl-pm post-merge<br/>specs reconciled"]
+    R --> PM
 ```
 
 A plan is a set of **work items sharing one goal**, each carrying exactly one **next step** from
@@ -157,9 +159,6 @@ folders, open issues, open pull requests, and live worktrees—tells you, runs t
 by telling you what changed and what comes next. Describing what you want in plain language does
 the same thing: the always-on `fl-flow` router detects the step and continues from there.
 
-> Mark this repo as a template once: **Settings → Template repository** on GitHub, or
-> `gh repo edit FL-spec/Setup --template`.
-
 ## Work from your phone
 
 This repo ships with a [dev container](.devcontainer/devcontainer.json) that pre-installs Claude
@@ -174,7 +173,10 @@ AGENTS.md            Canonical, vendor-neutral agent contract — every agent re
 WORKFLOW.md          Canonical delivery state machine (mermaid), all agents
 CLAUDE.md            Claude adapter: session navigator, detection table, role dispatch
 HOW_WE_BUILD.md      The method, with ready-to-copy prompts
-README.md            You are here
+README.md            This file
+CHANGELOG.md         Release history
+CONTRIBUTING.md      How to change the template
+SECURITY.md          How to report a vulnerability
 SETUP.md             Phone / Codespaces workflow
 Makefile             make check — the template's own gates
 .agents/roles/       Canonical role definitions (vendor-neutral)
@@ -195,6 +197,8 @@ tests/               The template's contract tests
 .github/
   workflows/         ci.yml (template contract + stack presets) · security.yml · sync-wiki.yml
   scripts/           flatten_wiki.py — publishes wiki/ to the GitHub Wiki
+  CODE_OF_CONDUCT.md  Contributor Covenant 2.1
+  ISSUE_TEMPLATE/     Bug report and workflow-change forms
   pull_request_template.md
 wiki/
   CONTEXT.md         Domain glossary — loaded into every subagent
@@ -229,9 +233,30 @@ make docs             # Google style + signs-of-ai-writing, warnings fail
 make docs-suggestions # advisory: everything the gate let through
 ```
 
+## Limitations
+
+- The flow assumes GitHub. Issues, pull requests and the optional project board are its state
+  store, so GitLab or Bitbucket need the skills rewritten.
+- `/fl-bootstrap` has to run before anything else. Until it does, `make check` reports the
+  config placeholders that remain and the `fl-*` skills stop early.
+- The 300-line slice cap is a default in `.sdlc/sdlc-config.yml`. Large refactors need splitting
+  by hand or a raised cap.
+- Risky work (auth, payments, security, large refactors) is never handed to a subagent
+  unattended. Expect the agent to stop and ask.
+- Template updates don't flow into projects already created from it. Pull changes in by hand,
+  using the [changelog](CHANGELOG.md) as the guide.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities privately as described in
+[SECURITY.md](SECURITY.md).
+
+## License
+
+[MIT](LICENSE). The interview method descends from Matt Pocock's `grill-with-docs`.
+
 ---
 
 <div align="center">
-<sub>v2.1—the plan-maturity SDLC, generalized from a production repo. The interview method
-descends from Matt Pocock's <code>grill-with-docs</code>; everything else is ours.</sub>
+<sub>v2.1.1. Release history is in the <a href="CHANGELOG.md">changelog</a>.</sub>
 </div>
